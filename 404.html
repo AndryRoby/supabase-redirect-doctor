@@ -3,114 +3,50 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Page not found — Supabase Redirect Doctor</title>
+<title>Page not found: Supabase Redirect Doctor</title>
 <meta name="robots" content="noindex" />
 <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
 <link rel="alternate icon" href="./favicon.ico" />
 <!-- No external font CDN: system font stack only (see body { font-family } below). -->
 <style>
   :root {
-    --bg:        oklch(0.155 0.004 60);
-    --bg-2:      oklch(0.185 0.005 60);
-    --border:    oklch(0.305 0.007 60);
-    --border-2:  oklch(0.40 0.008 60);
-    --text:      oklch(0.965 0.003 80);
-    --text-2:    oklch(0.82 0.006 70);
-    --muted:     oklch(0.62 0.008 60);
-    --faint:     oklch(0.45 0.007 60);
-    --accent:    oklch(0.80 0.155 65);
-    --accent-2:  oklch(0.86 0.13 65);
-    --accent-ink: oklch(0.20 0.03 60);
-    --radius: 6px;
-    --radius-lg: 10px;
+    --paper:#f6f2ea; --paper-2:#fbf9f4; --ink:#1b1a17; --ink-2:#4a4741; --muted:#66625a; --line:#d9d2c4;
+    --accent:#b23a1d;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+    --sans:system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,"Cascadia Code",Consolas,Menlo,monospace;
   }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; }
-  html { background: var(--bg); color: var(--text); }
+  @media (prefers-color-scheme: dark) {
+    :root { --paper:#151412; --paper-2:#1d1b18; --ink:#efe9de; --ink-2:#c9c2b5; --muted:#8f887b; --line:#2e2b26; --accent:#e0623f; }
+  }
+  * { box-sizing:border-box; }
+  html, body { margin:0; }
+  html { background:var(--paper); }
   body {
-    font-family: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
-    font-size: 16px;
-    line-height: 1.55;
-    -webkit-font-smoothing: antialiased;
-    background:
-      radial-gradient(900px 500px at 80% -10%, oklch(0.24 0.02 65 / 0.5), transparent 60%),
-      radial-gradient(700px 400px at -10% 10%, oklch(0.22 0.015 250 / 0.35), transparent 60%),
-      var(--bg);
-    background-attachment: fixed;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
+    color:var(--ink); background:var(--paper); font:16px/1.55 var(--sans); -webkit-font-smoothing:antialiased;
+    min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;
   }
-  .mono, code { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace; }
-  a { color: var(--text); text-decoration: none; }
-  a:hover { color: var(--accent-2); }
-  .card {
-    max-width: 520px;
-    width: 100%;
-    border: 1px solid var(--border);
-    background: var(--bg-2);
-    border-radius: var(--radius-lg);
-    padding: 40px 36px 36px;
-    text-align: center;
-  }
-  .brand {
-    display: inline-flex; align-items: center; gap: 10px;
-    font-family: "JetBrains Mono", monospace;
-    font-weight: 600; font-size: 14px; letter-spacing: -0.01em;
-    margin-bottom: 28px;
-  }
-  .brand-mark {
-    width: 22px; height: 22px;
-    background: var(--accent);
-    color: var(--accent-ink);
-    border-radius: 4px;
-    display: grid; place-items: center;
-    font-size: 12px; font-weight: 700;
-  }
-  .code404 {
-    font-family: "JetBrains Mono", monospace;
-    font-size: 13px;
-    color: var(--muted);
-    margin: 0 0 10px;
-  }
-  .code404::before { content: "// "; color: var(--faint); }
-  h1 {
-    font-size: clamp(24px, 4vw, 30px);
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    margin: 0 0 12px;
-  }
-  p.sub {
-    color: var(--text-2);
-    font-size: 15px;
-    margin: 0 0 28px;
-  }
-  .btn {
-    display: inline-flex; align-items: center; gap: 8px;
-    height: 42px; padding: 0 20px;
-    border-radius: var(--radius);
-    font-size: 14.5px; font-weight: 500;
-    background: var(--accent);
-    color: var(--accent-ink);
-    border: 1px solid var(--accent);
-    transition: background .12s ease, transform .06s ease;
-  }
-  .btn:hover { background: var(--accent-2); color: var(--accent-ink); }
-  .btn:active { transform: translateY(1px); }
+  a { color:inherit; text-decoration-color:var(--line); text-underline-offset:3px; }
+  a:hover { text-decoration-color:var(--accent); }
+  :focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+  .mono { font-family:var(--mono); }
+  .card { max-width:480px; width:100%; text-align:center; }
+  .kicker { font:400 14px/1 var(--serif); color:var(--accent); letter-spacing:.06em; text-transform:uppercase; margin:0 0 14px; }
+  h1 { font:400 clamp(28px,6vw,40px)/1.15 var(--serif); letter-spacing:-.01em; margin:0 0 14px; }
+  p.sub { color:var(--ink-2); font-size:15.5px; margin:0 0 28px; overflow-wrap:anywhere; }
+  .btn { display:inline-block; font:600 15px/1 var(--sans); padding:13px 20px; border-radius:4px; text-decoration:none; }
+  .btn-solid { background:var(--accent); color:#fff; }
+  .wordmark { display:block; font:600 15px/1 var(--serif); color:var(--muted); text-decoration:none; margin-bottom:34px; }
+  .wordmark:hover { color:var(--accent); }
 </style>
 </head>
 <body>
   <div class="card">
-    <div class="brand">
-      <span class="brand-mark">SD</span>
-      <span>Supabase Redirect Doctor</span>
-    </div>
-    <p class="code404">404</p>
+    <a class="wordmark" href="./">Supabase Redirect Doctor</a>
+    <p class="kicker">404</p>
     <h1>This page doesn't exist.</h1>
-    <p class="sub">The redirect you followed didn't match anything here either — welcome to the club. Head back and paste your Supabase Auth config instead.</p>
-    <a class="btn" href="./">Back to Supabase Redirect Doctor</a>
+    <p class="sub">The redirect you followed didn't match anything here either. Paste your Supabase Auth config on the tool page instead.</p>
+    <a class="btn btn-solid" href="./">Back to Supabase Redirect Doctor</a>
   </div>
 </body>
 </html>
