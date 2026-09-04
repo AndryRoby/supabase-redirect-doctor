@@ -1,4 +1,4 @@
-// doctor-web.js — Supabase Auth Redirect Doctor (web apps) core logic.
+// doctor-web.js: Supabase Auth Redirect Doctor (web apps) core logic.
 //
 // Pure, deterministic, 100% client-side: given a web app + Supabase Auth OAuth
 // redirect configuration (Next.js App/Pages Router, Vite/React, SvelteKit, …),
@@ -9,7 +9,7 @@
 // Nothing in this file makes a network request. It only reads the object you
 // pass to diagnose().
 //
-// This is the sibling of the Expo + Supabase tool's doctor.js — same glob
+// This is the sibling of the Expo + Supabase tool's doctor.js: same glob
 // matcher (copied verbatim, not imported, so this file has zero cross-repo
 // dependencies), same diagnose() shape, different domain rules for web apps
 // instead of native/Expo runtimes.
@@ -18,7 +18,7 @@
 //  - https://supabase.com/docs/guides/auth/redirect-urls
 //      (Site URL fallback behaviour: "the Site URL... defines the default
 //      redirect URL when no redirectTo is specified"; glob syntax for the
-//      redirect allow-list — "." and "/" are separator characters; the
+//      redirect allow-list: "." and "/" are separator characters; the
 //      documented Vercel pattern "https://*-<team-or-account-slug>.vercel.app/**"
 //      with NEXT_PUBLIC_VERCEL_URL, and Netlify pattern
 //      "https://**--my_org.netlify.app/**")
@@ -73,9 +73,9 @@ function stripWww(host) {
 }
 
 // ───────────────────────── Supabase redirect-URL glob matcher ─────────────────────────
-// Copied verbatim from the Expo + Supabase Redirect Doctor's doctor.js — the
+// Copied verbatim from the Expo + Supabase Redirect Doctor's doctor.js: the
 // allow-list syntax is a Supabase Auth feature, identical for every client.
-// Per https://supabase.com/docs/guides/auth/redirect-urls — "." and "/" are
+// Per https://supabase.com/docs/guides/auth/redirect-urls: "." and "/" are
 // separator characters:
 //   *   any run of non-separator characters
 //   **  any run of characters, including separators
@@ -283,7 +283,7 @@ export function diagnose(config) {
     problems.push({
       severity: 'medium',
       code: 'missing_site_url',
-      message: "supabase.siteUrl is empty. Supabase's own default after project creation is often still http://localhost:3000 — that default silently ships to production until someone changes it.",
+      message: "supabase.siteUrl is empty. Supabase's own default after project creation is often still http://localhost:3000: that default silently ships to production until someone changes it.",
       where: 'supabase.siteUrl',
     });
     fixes.push({
@@ -295,7 +295,7 @@ export function diagnose(config) {
     problems.push({
       severity: 'high',
       code: 'site_url_is_localhost',
-      message: 'Supabase Site URL still points to localhost. Supabase falls back to Site URL whenever redirectTo is missing or not allow-listed, so a rejected redirect silently sends users to localhost — including in production.',
+      message: 'Supabase Site URL still points to localhost. Supabase falls back to Site URL whenever redirectTo is missing or not allow-listed, so a rejected redirect silently sends users to localhost: including in production.',
       where: 'supabase.siteUrl',
     });
     fixes.push({
@@ -308,7 +308,7 @@ export function diagnose(config) {
       problems.push({
         severity: 'low',
         code: 'site_url_trailing_slash',
-        message: `Site URL "${rawSiteUrl}" has a trailing slash. Supabase's URL Configuration expects it without one — keep it exact to avoid subtle mismatches.`,
+        message: `Site URL "${rawSiteUrl}" has a trailing slash. Supabase's URL Configuration expects it without one: keep it exact to avoid subtle mismatches.`,
         where: 'supabase.siteUrl',
       });
       fixes.push({ title: 'Remove the trailing slash from Site URL', value: siteUrl, where: 'Supabase → Authentication → URL Configuration → Site URL' });
@@ -317,7 +317,7 @@ export function diagnose(config) {
       problems.push({
         severity: 'high',
         code: 'site_url_not_https',
-        message: 'Site URL uses http instead of https. Use https in production — most OAuth providers reject or warn on plain-http redirect targets, and browsers increasingly block mixed content.',
+        message: 'Site URL uses http instead of https. Use https in production: most OAuth providers reject or warn on plain-http redirect targets, and browsers increasingly block mixed content.',
         where: 'supabase.siteUrl',
       });
       fixes.push({ title: 'Use https for Site URL', value: siteUrl.replace(/^http:\/\//i, 'https://'), where: 'Supabase → Authentication → URL Configuration → Site URL' });
@@ -329,7 +329,7 @@ export function diagnose(config) {
           problems.push({
             severity: 'high',
             code: 'site_url_www_apex_mismatch',
-            message: `Site URL is "${siteUrl}" but your production origin is "${productionOrigin}" — a www vs. apex mismatch. Pick one as canonical: it must be the Site URL, and the other domain (if you still serve it) needs its own allow-list entry or a redirect to the canonical one.`,
+            message: `Site URL is "${siteUrl}" but your production origin is "${productionOrigin}": a www vs. apex mismatch. Pick one as canonical: it must be the Site URL, and the other domain (if you still serve it) needs its own allow-list entry or a redirect to the canonical one.`,
             where: 'supabase.siteUrl',
           });
           fixes.push({ title: 'Make Site URL match your canonical production origin exactly', value: productionOrigin, where: 'Supabase → Authentication → URL Configuration → Site URL' });
@@ -337,7 +337,7 @@ export function diagnose(config) {
           problems.push({
             severity: 'high',
             code: 'site_url_mismatch',
-            message: `Site URL is "${siteUrl}" but app.productionOrigin is "${productionOrigin}". Supabase's Site URL must be exactly your production origin — a mismatch means the fallback redirect (and any relative redirectTo) lands on the wrong domain.`,
+            message: `Site URL is "${siteUrl}" but app.productionOrigin is "${productionOrigin}". Supabase's Site URL must be exactly your production origin: a mismatch means the fallback redirect (and any relative redirectTo) lands on the wrong domain.`,
             where: 'supabase.siteUrl',
           });
           fixes.push({ title: 'Set Site URL to match app.productionOrigin', value: productionOrigin, where: 'Supabase → Authentication → URL Configuration → Site URL' });
@@ -352,7 +352,7 @@ export function diagnose(config) {
     problems.push({
       severity: 'medium',
       code: 'project_url_unusual',
-      message: `"${projectUrl}" doesn't look like a standard https://<ref>.supabase.co project URL. If this is a custom auth domain, confirm it's mapped correctly — otherwise check for a typo.`,
+      message: `"${projectUrl}" doesn't look like a standard https://<ref>.supabase.co project URL. If this is a custom auth domain, confirm it's mapped correctly: otherwise check for a typo.`,
       where: 'supabase.projectUrl',
     });
   } else if (!projectUrl) {
@@ -378,7 +378,7 @@ export function diagnose(config) {
         problems.push({
           severity: 'medium',
           code: 'allowlist_trailing_slash_mismatch',
-          message: `Your allow-list covers "${altValue}" but the app's callback URL is "${callbackUrl}" — a trailing-slash mismatch. Supabase allow-list matching is exact per path segment, so this silently fails.`,
+          message: `Your allow-list covers "${altValue}" but the app's callback URL is "${callbackUrl}": a trailing-slash mismatch. Supabase allow-list matching is exact per path segment, so this silently fails.`,
           where: 'supabase.allowedRedirectUrls',
         });
         fixes.push({ title: 'Fix the trailing slash in the allow-list entry', value: callbackUrl, where: 'Supabase → Authentication → URL Configuration → Redirect URLs' });
@@ -396,7 +396,7 @@ export function diagnose(config) {
 
   const hasLocalhostEntry = allowList.some((p) => /^https?:\/\/(localhost|127\.0\.0\.1)(:|\/|$)/i.test(p.trim()));
   if (hasLocalhostEntry) {
-    checklist.push('A localhost entry is on your redirect allow-list for local development — that\'s expected and fine to keep alongside your production entry.');
+    checklist.push('A localhost entry is on your redirect allow-list for local development: that\'s expected and fine to keep alongside your production entry.');
   } else {
     checklist.push('If you also test OAuth locally, allow-list your dev callback too, e.g. "http://localhost:3000/auth/callback".');
   }
@@ -405,7 +405,7 @@ export function diagnose(config) {
     problems.push({
       severity: 'low',
       code: 'vercel_preview_not_allowlisted',
-      message: 'Deployed on Vercel, but no *.vercel.app pattern is on the redirect allow-list — OAuth will fail on preview deployments (it will still work on production).',
+      message: 'Deployed on Vercel, but no *.vercel.app pattern is on the redirect allow-list: OAuth will fail on preview deployments (it will still work on production).',
       where: 'supabase.allowedRedirectUrls',
     });
     fixes.push({
@@ -417,7 +417,7 @@ export function diagnose(config) {
     problems.push({
       severity: 'low',
       code: 'netlify_preview_not_allowlisted',
-      message: 'Deployed on Netlify, but no *.netlify.app pattern is on the redirect allow-list — OAuth will fail on deploy previews (it will still work on production).',
+      message: 'Deployed on Netlify, but no *.netlify.app pattern is on the redirect allow-list: OAuth will fail on deploy previews (it will still work on production).',
       where: 'supabase.allowedRedirectUrls',
     });
     fixes.push({
@@ -442,14 +442,14 @@ export function diagnose(config) {
         problems.push({
           severity: 'high',
           code: 'provider_uri_points_to_app',
-          message: `${providerLabel(providerName)} has a redirect URI pointing at your own app's domain instead of the Supabase callback. In the OAuth handshake the provider redirects to Supabase first (${supabaseCallback}), and Supabase then redirects on to your app — your app's own URL never goes in the provider console.`,
+          message: `${providerLabel(providerName)} has a redirect URI pointing at your own app's domain instead of the Supabase callback. In the OAuth handshake the provider redirects to Supabase first (${supabaseCallback}), and Supabase then redirects on to your app: your app's own URL never goes in the provider console.`,
           where: 'provider.authorizedRedirectUris',
         });
       } else {
         problems.push({
           severity: 'high',
           code: 'provider_redirect_uri_missing',
-          message: `${providerLabel(providerName)} doesn't contain the exact URL "${supabaseCallback}". OAuth providers require an exact match here — wildcards aren't accepted.`,
+          message: `${providerLabel(providerName)} doesn't contain the exact URL "${supabaseCallback}". OAuth providers require an exact match here: wildcards aren't accepted.`,
           where: 'provider.authorizedRedirectUris',
         });
       }
@@ -468,7 +468,7 @@ export function diagnose(config) {
       problems.push({
         severity: 'high',
         code: 'missing_callback_route',
-        message: `flowType is pkce but no callback route exists at "${callbackPath}" yet. PKCE needs a server route that receives the ?code= param and exchanges it for a session — without it, users land on your app with a dead ?code= in the URL.`,
+        message: `flowType is pkce but no callback route exists at "${callbackPath}" yet. PKCE needs a server route that receives the ?code= param and exchanges it for a session: without it, users land on your app with a dead ?code= in the URL.`,
         where: 'code.callbackRouteExists',
       });
       fixes.push({ title: 'Add a PKCE callback route handler', value: snippet.code, where: snippet.where });
@@ -476,7 +476,7 @@ export function diagnose(config) {
       problems.push({
         severity: 'high',
         code: 'missing_exchange_code_for_session',
-        message: "flowType is pkce but the callback route isn't calling exchangeCodeForSession(code) yet. With PKCE, the callback URL carries a code param that must be exchanged for a session — it isn't a session by itself.",
+        message: "flowType is pkce but the callback route isn't calling exchangeCodeForSession(code) yet. With PKCE, the callback URL carries a code param that must be exchanged for a session: it isn't a session by itself.",
         where: 'code.callsExchangeCodeForSession',
       });
       fixes.push({ title: 'Exchange the code for a session in the callback route', value: 'const { error } = await supabase.auth.exchangeCodeForSession(code);', where: `app${callbackPath}/route.ts` });
@@ -486,16 +486,16 @@ export function diagnose(config) {
       problems.push({
         severity: 'medium',
         code: 'implicit_flow_with_ssr',
-        message: 'flowType is implicit while using an SSR setup (Next.js / @supabase/ssr). Implicit flow returns the session in the URL fragment, which a server can\'t read — SSR helpers are built around PKCE\'s code-exchange step instead.',
+        message: 'flowType is implicit while using an SSR setup (Next.js / @supabase/ssr). Implicit flow returns the session in the URL fragment, which a server can\'t read: SSR helpers are built around PKCE\'s code-exchange step instead.',
         where: 'app.flowType',
       });
-      fixes.push({ title: 'Switch to PKCE', value: "createBrowserClient(url, key) // @supabase/ssr defaults to PKCE — just add the callback route", where: 'supabase client options' });
+      fixes.push({ title: 'Switch to PKCE', value: "createBrowserClient(url, key) // @supabase/ssr defaults to PKCE: just add the callback route", where: 'supabase client options' });
     }
   } else if (!flowType && ssrExpected) {
     problems.push({
       severity: 'low',
       code: 'flow_type_not_set',
-      message: 'app.flowType is not set. With an SSR package or Next.js, PKCE is the expected flow — confirm it explicitly so the callback route requirement below is accurate.',
+      message: 'app.flowType is not set. With an SSR package or Next.js, PKCE is the expected flow: confirm it explicitly so the callback route requirement below is accurate.',
       where: 'app.flowType',
     });
   }
@@ -506,7 +506,7 @@ export function diagnose(config) {
     problems.push({
       severity: 'medium',
       code: 'redirect_snippet_missing',
-      message: 'No redirectTo snippet was provided. Without an explicit redirectTo, signInWithOAuth() falls back to Site URL — which only works if Site URL is exactly your production origin.',
+      message: 'No redirectTo snippet was provided. Without an explicit redirectTo, signInWithOAuth() falls back to Site URL: which only works if Site URL is exactly your production origin.',
       where: 'code.redirectToSnippet',
     });
   } else {
@@ -514,7 +514,7 @@ export function diagnose(config) {
       problems.push({
         severity: 'high',
         code: 'redirect_snippet_hardcoded_localhost',
-        message: 'The redirectTo snippet hardcodes "http://localhost" — this ships to production verbatim and Supabase will reject it if it\'s not on the allow-list, then fall back to Site URL.',
+        message: 'The redirectTo snippet hardcodes "http://localhost": this ships to production verbatim and Supabase will reject it if it\'s not on the allow-list, then fall back to Site URL.',
         where: 'code.redirectToSnippet',
       });
       fixes.push({
@@ -529,7 +529,7 @@ export function diagnose(config) {
       problems.push({
         severity: 'high',
         code: 'redirect_snippet_optional_chaining_env',
-        message: 'The snippet uses "process?.env" — optional chaining on `process` itself. In the browser bundle `process` is typically undefined, so `process?.env` short-circuits to `undefined` and the whole expression silently resolves to nothing (a real-world case reported in Supabase discussion #38063). Use `process.env.VAR` directly (bundlers statically replace it) or `import.meta.env.VAR` on Vite.',
+        message: 'The snippet uses "process?.env": optional chaining on `process` itself. In the browser bundle `process` is typically undefined, so `process?.env` short-circuits to `undefined` and the whole expression silently resolves to nothing (a real-world case reported in Supabase discussion #38063). Use `process.env.VAR` directly (bundlers statically replace it) or `import.meta.env.VAR` on Vite.',
         where: 'code.redirectToSnippet',
       });
       fixes.push({
@@ -547,7 +547,7 @@ export function diagnose(config) {
         problems.push({
           severity: 'low',
           code: 'redirect_snippet_origin_no_ssr_fallback',
-          message: 'The snippet uses window.location.origin with no SSR-safe fallback. On the server (SSR render, route handler) there is no window — this throws or needs a guard in any code path that can run server-side.',
+          message: 'The snippet uses window.location.origin with no SSR-safe fallback. On the server (SSR render, route handler) there is no window: this throws or needs a guard in any code path that can run server-side.',
           where: 'code.redirectToSnippet',
         });
         fixes.push({
@@ -565,10 +565,10 @@ export function diagnose(config) {
     ? `Add "${callbackUrl}" (your app's exact callback) to the Supabase redirect allow-list.`
     : 'Set app.productionOrigin so the exact callback URL can be checked.');
   checklist.push(supabaseCallback
-    ? `Add "${supabaseCallback}" to ${providerLabel(providerName)} — exact match, no wildcards.`
+    ? `Add "${supabaseCallback}" to ${providerLabel(providerName)}: exact match, no wildcards.`
     : 'Set supabase.projectUrl so the exact provider callback URL can be computed.');
   checklist.push('Use flowType: "pkce" and call exchangeCodeForSession(code) in your callback route.');
-  checklist.push('Re-run this check after every deploy — Supabase settings and provider consoles drift independently from your code.');
+  checklist.push('Re-run this check after every deploy: Supabase settings and provider consoles drift independently from your code.');
 
   const sorted = sortProblems(problems);
   const highCount = sorted.filter((p) => p.severity === 'high').length;
@@ -598,7 +598,7 @@ export function diagnose(config) {
     fixes,
     checklist,
     disclaimer:
-      'Read-only, client-side analysis of the values you entered. Nothing is verified against your live Supabase project or provider console — always confirm in your own environment before shipping.',
+      'Read-only, client-side analysis of the values you entered. Nothing is verified against your live Supabase project or provider console: always confirm in your own environment before shipping.',
   };
 }
 
