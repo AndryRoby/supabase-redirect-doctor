@@ -1,122 +1,103 @@
-# Supabase Redirect Doctor — for Next.js, Vite, SvelteKit and friends
+# Supabase Redirect Doctor
+
+Checks a Supabase Auth OAuth or magic-link redirect configuration for a web app (Next.js, Vite, SvelteKit, or similar) and finds why it works on localhost and breaks in production.
 
 Live: https://arling.sk/supabase-redirect-doctor/
 
-A free, static, client-side tool that checks your **Supabase Auth**
-OAuth/magic-link redirect configuration for a web app (Next.js App
-Router or Pages Router, `@supabase/ssr`, Vite + React, SvelteKit,
-Remix, plain JS…) and points at the exact mismatch causing your
-redirect to fail in production — instead of you re-reading the
-Supabase docs for the fifth time.
+## What it checks
 
-## What it's for
+You paste your Supabase and app configuration into the page. The checks, in the order the engine runs them:
 
-If your Supabase Auth sign-in works fine on `localhost` and then breaks
-the moment you deploy — the OAuth flow bounces back to
-`localhost:3000`, lands on the wrong domain, throws
-`redirect_uri_mismatch` from the provider, or 404s on your callback
-route — this tool takes the config you'd normally have scattered
-across your Supabase dashboard, your hosting provider's environment
-variables, and your OAuth app settings (Google Cloud Console, GitHub
-OAuth App, etc.), and cross-checks it for the handful of mismatches
-that cause almost all of these failures:
+- **Production origin present.** Without `app.productionOrigin` the tool can't compute or verify the exact callback URL.
+- **Supabase Site URL.** Empty, still pointing at `localhost`, missing `https`, a trailing slash, or not matching your production origin (including a `www` vs. apex mismatch). Supabase falls back to Site URL whenever `redirectTo` is missing or not allow-listed, so a wrong Site URL sends users to the wrong place silently.
+- **Supabase project URL shape.** Flags a `projectUrl` that doesn't look like `https://<ref>.supabase.co`.
+- **Redirect URLs allow-list coverage.** Whether the app's exact callback URL is covered by an allow-list entry, including a trailing-slash-only mismatch, and whether a Vercel or Netlify deployment has its preview-domain wildcard allow-listed.
+- **Provider console callback URL.** Whether Google Cloud Console, GitHub OAuth App, Apple, Azure, or Discord has the exact `https://<ref>.supabase.co/auth/v1/callback`, and catches the common mistake of putting the app's own domain there instead.
+- **PKCE callback route.** Whether a callback route exists and calls `exchangeCodeForSession(code)`, and whether `flowType: "implicit"` was left set on an SSR (`@supabase/ssr`, Next.js) setup that needs PKCE instead.
+- **`redirectTo` code snippet.** Hardcoded `http://localhost`, the `process?.env.VAR` optional-chaining bug that silently evaluates to `undefined` at build time, and `window.location.origin` used without an SSR-safe fallback.
 
-- Supabase's **Site URL** silently overriding your `redirectTo` /
-  `emailRedirectTo` whenever the value you pass isn't on the
-  **Redirect URLs allow-list** — a common trap when Site URL was never
-  changed from its default and still points at `localhost:3000`.
-- The **Redirect URLs allow-list** using exact-string / wildcard
-  matching, not domain-equivalence — an entry for `www.example.com`
-  does **not** cover `example.com` (apex) or a Vercel preview URL, and
-  vice versa.
-- A missing or misrouted **PKCE callback route** — a
-  `/auth/callback` (or `/auth/confirm`) route handler that's supposed
-  to call `exchangeCodeForSession(code)` but is absent, on the wrong
-  path, or not on the allow-list itself.
-- The **provider's own callback URL** (Google Cloud Console's
-  Authorized redirect URIs, GitHub OAuth App's Authorization callback
-  URL) not matching Supabase's own
-  `https://<ref>.supabase.co/auth/v1/callback` — this one lives in a
-  third dashboard entirely and is easy to forget.
-- Client-side env var snippets that look right in code but don't
-  behave the way you'd expect at build time — e.g. framework-specific
-  gotchas around how `NEXT_PUBLIC_*` / `VITE_*` / `PUBLIC_*` variables
-  get inlined, which break silently rather than throwing.
+## What it does not do
 
-## How it works (client-side only)
+This is a config linter, not a live tester. It does not call Supabase, the OAuth provider, or your app. It does not sign in, exchange a code, or verify that your project actually exists. It only checks the values you type against known-bad patterns and reports the mismatch. Nothing you paste is sent anywhere, and it does not create an account or ask for one.
 
-Everything runs in your browser. There is no backend, no account, and
-no payment wall for the core check. You paste your configuration
-(Site URL, Redirect URLs allow-list, callback route, `redirectTo`
-value, framework) into the page, JavaScript in `index.html` /
-`doctor-web.js` parses and lints it against a set of known-bad patterns —
-including a glob matcher that mirrors how Supabase's own allow-list
-matching behaves — and you get a plain-language report of what's
-wrong and how to fix it.
+## How it works
 
-Nothing about your configuration is sent anywhere. The only network
-activity this site generates is:
+Everything runs in one pure function, `diagnose(config)`, exported from `doctor-web.js` and also exposed as `window.RedirectDoctorWeb.diagnose` when the page loads it as a module. It takes no network calls; it only reads the object you pass in.
 
-- loading its own static assets (HTML/CSS/JS) from GitHub Pages,
-- and anonymous product-analytics events (page view, "run check"
-  clicked, etc.) sent to a self-hosted Umami instance — **event names
-  and counts only, never the content of what you pasted.**
+```json
+{
+  "app": { "productionOrigin": "https://myapp.com", "callbackPath": "/auth/callback", "flowType": "pkce" },
+  "supabase": {
+    "projectUrl": "https://abcd1234.supabase.co",
+    "siteUrl": "http://localhost:3000",
+    "allowedRedirectUrls": ["https://myapp.com/auth/callback"]
+  },
+  "provider": { "name": "google", "authorizedRedirectUris": ["https://abcd1234.supabase.co/auth/v1/callback"] }
+}
+```
 
-You can verify this yourself: open your browser's network tab while
-using the tool, or just read `index.html` and `doctor-web.js` — it's
-static files with no build step.
+```json
+{
+  "status": "fail",
+  "summary": "1 blocking mismatch found. Most urgent: Supabase Site URL still points to localhost. Supabase falls back to Site URL whenever redirectTo is missing or not allow-listed, so a rejected redirect silently sends users to localhost: including in production.",
+  "problems": [
+    { "severity": "high", "code": "site_url_is_localhost", "message": "Supabase Site URL still points to localhost. Supabase falls back to Site URL whenever redirectTo is missing or not allow-listed, so a rejected redirect silently sends users to localhost: including in production." },
+    { "severity": "medium", "code": "redirect_snippet_missing", "message": "No redirectTo snippet was provided. Without an explicit redirectTo, signInWithOAuth() falls back to Site URL: which only works if Site URL is exactly your production origin." }
+  ]
+}
+```
 
-## Privacy
+That is the real, unedited output of running `node` and calling `diagnose(input)` on this repo's `doctor-web.js` (the em dashes above are the engine's own message text, quoted verbatim). The site URL is a leftover default, so the redirect will bounce to `localhost:3000` in production even though the allow-list entry and provider callback are both correct.
 
-- No account, no login, no cookies for the tool itself.
-- No server-side processing of your config — the "backend" is your
-  own browser's JavaScript engine.
-- Analytics (Umami) records that *a* check ran, not *what* you
-  checked.
-- If you're paranoid (fair, given the subject matter), download the
-  repo and open `index.html` locally with your network disconnected —
-  it still works.
+## Run locally
 
-## Running it locally
-
-There's no build step. It's static files.
+No build step, no dependencies.
 
 ```bash
-git clone https://github.com/andryroby/supabase-redirect-doctor.git
+git clone https://github.com/AndryRoby/supabase-redirect-doctor.git
 cd supabase-redirect-doctor
-# any static file server works, e.g.:
-npx serve .
+python -m http.server
 # or just open index.html directly in a browser
 ```
 
-## Reporting a missing case / false positive
+## Tests
 
-Found a Supabase Auth redirect failure mode this tool doesn't catch,
-or a check that flags something that's actually fine? Please open an
-issue on the GitHub repo with:
+```bash
+node tests.mjs
+```
 
-1. The relevant (redacted) config — framework, Site URL pattern,
-   Redirect URLs entries, callback route.
-2. What actually went wrong at runtime (error text, screenshot, or
-   behavior description).
-3. What you expected the tool to say.
+87 assertions, 0 failures, against `doctor-web.js` directly (no browser needed).
 
-Redact anything sensitive (project refs, client secrets, real
-domains) before posting — issues are public.
+## Privacy
 
-## Disclaimer
+Everything runs client-side; nothing you paste into the form is sent anywhere. Umami analytics is self-hosted and cookie-free, and records only that a check ran, never the content of it. Joining the email list on the page is optional and only for new-tool announcements. Details: https://arling.sk/privacy/
 
-This tool is provided **as is**, with no warranty of any kind. It
-checks for known, common misconfiguration patterns — it cannot
-guarantee your OAuth or magic-link flow will work, and a clean report
-is not a guarantee of a working integration. Supabase, Next.js, Vite,
-SvelteKit, Google, and GitHub are not affiliated with this tool, and
-their APIs, SDKs, and dashboards may change in ways that make
-individual checks stale over time. Always verify against the current
-official documentation for anything security-relevant (redirect URI
-allow-lists, OAuth client secrets, etc.).
+## Sources
 
-## About
+The rules implemented here come from:
 
-Built by ARLing s. r. o. (Bratislava, Slovakia).
-Contact: andrej@arling.sk
+- [Redirect URLs](https://supabase.com/docs/guides/auth/redirect-urls): Site URL fallback behavior, redirect allow-list glob syntax, documented Vercel/Netlify preview patterns
+- [Server-Side Auth for Next.js](https://supabase.com/docs/guides/auth/server-side/nextjs): `@supabase/ssr`, cookie-based SSR sessions
+- [Login with Google](https://supabase.com/docs/guides/auth/social-login/auth-google): provider callback URL format, PKCE code-exchange step
+- [supabase/discussions#38063](https://github.com/orgs/supabase/discussions/38063): the `process?.env` optional-chaining bug that silently resolves to `undefined` in the browser bundle
+
+## Report a problem
+
+Found a redirect failure this tool doesn't catch, or a check that flags something that's actually fine? Open an issue: https://github.com/AndryRoby/supabase-redirect-doctor/issues, or write to andrej@arling.sk. Redact real domains, project refs, or client secrets first, issues are public.
+
+## License
+
+All rights reserved, see [LICENSE-NOTICE.md](LICENSE-NOTICE.md). Reading the code and learning from it is fine; deploying a copy of it as your own product is not.
+
+---
+
+ARLing s. r. o., Bratislava. Hub: https://arling.sk/
+
+Sister tools:
+- https://arling.sk/google-oauth-redirect-doctor/
+- https://arling.sk/expo-supabase-auth-doctor/
+- https://arling.sk/supabase-redirect-doctor/ (this one)
+- https://arling.sk/flutter-supabase-doctor/
+- https://arling.sk/expo-universal-links-doctor/
+- https://arling.sk/sepa-pain001-doctor/
+- https://arling.sk/bookapp/
