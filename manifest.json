@@ -1,0 +1,15 @@
+{
+  "name": "Supabase Redirect Doctor",
+  "short_name": "Redirect Doctor",
+  "description": "Diagnose Supabase Auth OAuth redirect mismatches in Next.js, Vite, and SvelteKit apps. Free, client-side, nothing leaves your browser.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#18130f",
+  "theme_color": "#18130f",
+  "icons": [
+    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

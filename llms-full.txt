@@ -1,0 +1,139 @@
+# Supabase Auth Redirect Doctor — web apps
+
+> Free, client-side checker that finds why a Supabase Auth OAuth or magic-link redirect falls back to localhost or the wrong domain in production for Next.js, Vite, or SvelteKit apps, and gives the exact fix.
+
+Paste your Site URL, Redirect URLs allow-list, callback route, and `redirectTo` snippet and it cross-checks them the same way Supabase's own allow-list matching works, then reports the specific mismatch — no account, no backend, nothing you type leaves your browser.
+
+## What it checks
+
+- Site URL fallback: whether `redirectTo` / `emailRedirectTo` actually matches an entry on Supabase's Redirect URLs allow-list, or silently falls back to Site URL.
+- Redirect allow-list glob matching: apex vs `www`, trailing slashes, and Vercel/Netlify preview-URL wildcards.
+- PKCE callback route: whether a route exists at the right path and calls `exchangeCodeForSession(code)`.
+- Provider console callback URL: whether Google/GitHub/etc. point at Supabase's `https://<ref>.supabase.co/auth/v1/callback` instead of your app's own URL.
+- `redirectTo` code snippets: heuristics for env-var mistakes such as `process?.env.NEXT_PUBLIC_SITE_URL` that silently evaluate to `undefined` at build time.
+
+## Who it's for
+
+Developers using Supabase Auth in a Next.js, Vite, or SvelteKit web app whose OAuth or magic-link sign-in works on `localhost` but breaks after deploying to Vercel, Netlify, Cloudflare Pages, or similar.
+
+## How it works
+
+Static HTML plus one dependency-free JavaScript file, `doctor-web.js`. The page calls a single pure function, `diagnose(config)`, entirely in your browser:
+
+```js
+import { diagnose } from './doctor-web.js';
+
+const result = diagnose({
+  app:      { productionOrigin, callbackPath, framework, usesSsrPackage, flowType, envSiteUrlVar, deployedOn },
+  supabase: { projectUrl, siteUrl, allowedRedirectUrls },
+  provider: { name, authorizedRedirectUris },
+  code:     { redirectToSnippet, callbackRouteExists, callsExchangeCodeForSession },
+});
+```
+
+There is no backend, no SDK key, and no request that carries your configuration anywhere — read `index.html` and `doctor-web.js` directly to verify.
+
+## Worked example
+
+Input (a Next.js App Router app on Vercel, using `@supabase/ssr` and PKCE, where Site URL was never changed from its default):
+
+```json
+{
+  "app": {
+    "productionOrigin": "https://myapp.com",
+    "callbackPath": "/auth/callback",
+    "framework": "nextjs-app",
+    "usesSsrPackage": true,
+    "flowType": "pkce",
+    "envSiteUrlVar": "NEXT_PUBLIC_SITE_URL",
+    "deployedOn": "vercel"
+  },
+  "supabase": {
+    "projectUrl": "https://abcd1234.supabase.co",
+    "siteUrl": "http://localhost:3000",
+    "allowedRedirectUrls": ["https://myapp.com/auth/callback"]
+  },
+  "provider": {
+    "name": "google",
+    "authorizedRedirectUris": ["https://abcd1234.supabase.co/auth/v1/callback"]
+  },
+  "code": {
+    "redirectToSnippet": "`${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`",
+    "callbackRouteExists": true,
+    "callsExchangeCodeForSession": true
+  }
+}
+```
+
+Output:
+
+```json
+{
+  "status": "fail",
+  "summary": "1 blocking mismatch found. Most urgent: Supabase Site URL still points to localhost. Supabase falls back to Site URL whenever redirectTo is missing or not allow-listed, so a rejected redirect silently sends users to localhost — including in production.",
+  "problems": [
+    {
+      "severity": "high",
+      "code": "site_url_is_localhost",
+      "message": "Supabase Site URL still points to localhost. Supabase falls back to Site URL whenever redirectTo is missing or not allow-listed, so a rejected redirect silently sends users to localhost — including in production.",
+      "where": "supabase.siteUrl"
+    },
+    {
+      "severity": "low",
+      "code": "vercel_preview_not_allowlisted",
+      "message": "Deployed on Vercel, but no *.vercel.app pattern is on the redirect allow-list — OAuth will fail on preview deployments (it will still work on production).",
+      "where": "supabase.allowedRedirectUrls"
+    }
+  ],
+  "fixes": [
+    {
+      "title": "Set Site URL to your production URL",
+      "value": "https://myapp.com",
+      "where": "Supabase → Authentication → URL Configuration → Site URL"
+    },
+    {
+      "title": "Allow-list Vercel preview deployments",
+      "value": "https://*-<your-team-or-account-slug>.vercel.app/** (or the broader https://*.vercel.app/**)",
+      "where": "Supabase → Authentication → URL Configuration → Redirect URLs"
+    }
+  ]
+}
+```
+
+Even though `redirectTo` and the allow-list entry both look correct, Site URL alone is enough to send production users to localhost the moment any redirect gets rejected — which is why the tool checks it as a standalone, high-severity issue.
+
+## FAQ
+
+**Why does Supabase OAuth redirect to localhost after deploying to Vercel?**
+Supabase falls back to your project's Site URL whenever the `redirectTo` value your code sends doesn't exactly match an entry on the Redirect URLs allow-list. If Site URL was never changed from its default of `http://localhost:3000`, any request that fails that allow-list check — a missing entry, a trailing slash, http vs https — lands back on localhost even though the app is live on Vercel.
+
+**What should Site URL be in Supabase for a Next.js app?**
+Site URL should be your app's canonical production origin — e.g. `https://app.example.com` — with no trailing slash and no path. It is the fallback Supabase uses whenever `redirectTo` doesn't match the allow-list, so leaving it at the default localhost value after deploying is what causes production sign-in to bounce back to localhost.
+
+**Which redirect URL do I add to Supabase for Vercel preview deployments?**
+Add a wildcard allow-list entry such as `https://*.vercel.app/**` alongside your production URL, since every preview deployment gets its own subdomain that a single hardcoded entry won't match. Without a wildcard pattern, OAuth on preview branches will keep falling back to Site URL even though production works fine.
+
+**Do I need exchangeCodeForSession in my /auth/callback route?**
+Yes, if your app uses the PKCE flow, which is the default for `@supabase/ssr`. The provider redirects back with a `?code=` query parameter, and your callback route must call `exchangeCodeForSession(code)` server-side to exchange it for a session — without that call the code sits unused in the URL and the user is never actually signed in.
+
+**What redirect URI goes into the Google Cloud console for Supabase?**
+Google Cloud Console — and any other OAuth provider console — needs Supabase's own callback URL, `https://<your-project-ref>.supabase.co/auth/v1/callback`, not your app's domain or your `/auth/callback` route. Supabase is the OAuth client that talks to Google directly; your app's callback route only ever receives the redirect from Supabase afterward.
+
+**Why does process?.env.NEXT_PUBLIC_SITE_URL break my redirectTo?**
+Next.js inlines `NEXT_PUBLIC_*` variables at build time by statically matching the literal `process.env.NEXT_PUBLIC_SITE_URL` expression in your source code. Optional chaining, as in `process?.env?.NEXT_PUBLIC_SITE_URL`, doesn't match that pattern, so the bundler can't inline it — in the browser bundle it silently evaluates to `undefined` instead of your URL, sending `redirectTo` down the Site URL fallback path instead of your real domain.
+
+## Privacy
+
+No account, no login, no cookies for the tool itself, no server-side processing of your config. The only analytics are anonymous usage counts (event name + count, never the content of what you pasted) sent to a self-hosted Umami instance.
+
+## Links
+
+- Tool: https://arling.sk/supabase-redirect-doctor/
+- Short reference: https://arling.sk/supabase-redirect-doctor/llms.txt
+- Source code: https://github.com/AndryRoby/supabase-redirect-doctor
+- Sibling tool for Expo / React Native: https://arling.sk/expo-supabase-auth-doctor/
+- Hub (more ARLing tools): https://arling.sk/
+
+## Contact
+
+Built by ARLing s. r. o. (Bratislava, Slovakia). andrej@arling.sk
