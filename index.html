@@ -303,6 +303,14 @@
   /* 04 Free: ask pattern */
   .ask { display:flex; flex-wrap:wrap; align-items:center; gap:14px 24px; }
   .ask p { margin:0; color:var(--ink-2); max-width:56ch; }
+  .hp { position:absolute; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+  .subscribe-form { display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+  .subscribe-form input[type="email"] { height:44px; min-width:0; flex:1 1 240px; padding:0 14px; border:1px solid var(--line); border-radius:4px; background:var(--paper-2); color:var(--ink); font:15px/1 var(--sans); }
+  .subscribe-form input[type="email"]::placeholder { color:var(--muted); }
+  .subscribe-form .btn { flex:none; }
+  #subscribe-thanks { color:var(--ok); font-weight:600; }
+  #subscribe-error { color:var(--accent); font-weight:600; }
+  @media (max-width: 480px) { .subscribe-form input[type="email"], .subscribe-form button { width:100%; } }
 
   /* details / FAQ (05) */
   details { border-top:1px solid var(--line); padding:14px 0; }
@@ -608,9 +616,15 @@
       <p class="kicker">04</p>
       <h2>Free.</h2>
       <p class="sub">No account, no payment, no usage limit. This started as a tool I needed myself, so it stays free for the people already using it.</p>
-      <div class="ask">
-        <p><b>Would you pay for a Pro version?</b> It would run this check in CI and fail the build when your redirect config drifts. One click tells me whether it's worth building. No email, no account.</p>
-        <button class="btn btn-line" id="pro-interest-btn" type="button">I'd use a Pro version</button>
+      <div class="ask subscribe-ask" id="subscribe">
+        <p><b>Tell me when a new tool lands.</b> New tools only. No newsletter, no sharing. Reply to any mail to be removed.</p>
+        <form id="subscribe-form" class="subscribe-form" data-subscribe data-source="supabase-web" data-lang="en" data-thanks="subscribe-thanks" data-error="subscribe-error" novalidate>
+          <div class="hp" aria-hidden="true"><input type="text" name="website" id="subscribe-website" tabindex="-1" autocomplete="off" /></div>
+          <input type="email" id="subscribe-email" name="email" required autocomplete="email" inputmode="email" placeholder="you@example.com" aria-label="Email address" />
+          <button class="btn btn-solid" type="submit">Notify me</button>
+        </form>
+        <p id="subscribe-thanks" hidden>Thanks. You will hear from us only when something new is live.</p>
+        <p id="subscribe-error" hidden>Could not save. Write to <a href="mailto:andrej@arling.sk">andrej@arling.sk</a>.</p>
       </div>
     </div>
   </section>
@@ -674,7 +688,7 @@
   <div class="wrap cols">
     <div><b>ARLing s. r. o.</b><br>Ivanská cesta 32E<br>821 04 Bratislava, Slovakia</div>
     <div>Company ID 56583486<br>VAT ID SK2122352100<br><a href="mailto:andrej@arling.sk">andrej@arling.sk</a></div>
-    <div><a href="https://arling.sk/supabase-redirect-doctor/llms.txt">llms.txt</a> &middot; <a href="https://github.com/AndryRoby/supabase-redirect-doctor" target="_blank" rel="noopener">source</a> &middot; <a href="https://arling.sk/expo-supabase-auth-doctor/">Expo sibling tool</a> &middot; <a href="https://arling.sk/">arling.sk</a><br>Provided as is, without warranty. Anonymous visit and click counts via self-hosted Umami; we never store what you type.</div>
+    <div><a href="https://arling.sk/supabase-redirect-doctor/llms.txt">llms.txt</a> &middot; <a href="https://github.com/AndryRoby/supabase-redirect-doctor" target="_blank" rel="noopener">source</a> &middot; <a href="https://arling.sk/expo-supabase-auth-doctor/">Expo sibling tool</a> &middot; <a href="https://arling.sk/">arling.sk</a> &middot; <a href="https://arling.sk/privacy/">Privacy</a><br>Provided as is, without warranty. Anonymous visit and click counts via self-hosted Umami; we never store what you type.</div>
   </div>
 </footer>
 
@@ -720,7 +734,6 @@
   const copyBtn = $('copy-btn');
   const rawToggleBtn = $('raw-toggle-btn');
   const copyLinkBtn = $('copy-link-btn');
-  const proBtn = $('pro-interest-btn');
   const meta = $('response-meta');
   const statusPill = $('status-pill');
   const timing = $('timing');
@@ -1077,13 +1090,6 @@
     setTimeout(() => { copyLinkBtn.textContent = 'Copy link to this diagnosis'; }, 1400);
   });
 
-  // ── Pro interest ─────────────────────────────────────────────────────
-  proBtn.addEventListener('click', () => {
-    track('pro_interest');
-    proBtn.textContent = 'Noted, thanks';
-    proBtn.disabled = true;
-  });
-
   // ── init ─────────────────────────────────────────────────────────────
   configToForm(SAMPLE_CONFIG);
   input.value = JSON.stringify(SAMPLE_CONFIG, null, 2);
@@ -1105,6 +1111,7 @@
   });
 </script>
 
+<script src="subscribe.js" defer></script>
 <script defer src="https://homelab.tailbf8f27.ts.net/script.js" data-website-id="afa8b5d6-07f8-4560-a653-1abe50a5efd0"></script>
 </body>
 </html>
