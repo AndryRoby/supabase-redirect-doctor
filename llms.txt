@@ -1,0 +1,37 @@
+# Supabase Auth Redirect Doctor — web apps
+
+> Free, client-side checker that finds why a Supabase Auth OAuth or magic-link redirect falls back to localhost or the wrong domain in production for Next.js, Vite, or SvelteKit apps, and gives the exact fix.
+
+Paste your Site URL, Redirect URLs allow-list, callback route, and `redirectTo` snippet and it cross-checks them the same way Supabase's own allow-list matching works, then reports the specific mismatch — no account, no backend, nothing you type leaves your browser.
+
+## What it checks
+
+- Site URL fallback: whether `redirectTo` / `emailRedirectTo` actually matches an entry on Supabase's Redirect URLs allow-list, or silently falls back to Site URL.
+- Redirect allow-list glob matching: apex vs `www`, trailing slashes, and Vercel/Netlify preview-URL wildcards.
+- PKCE callback route: whether a route exists at the right path and calls `exchangeCodeForSession(code)`.
+- Provider console callback URL: whether Google/GitHub/etc. point at Supabase's `https://<ref>.supabase.co/auth/v1/callback` instead of your app's own URL.
+- `redirectTo` code snippets: heuristics for env-var mistakes such as `process?.env.NEXT_PUBLIC_SITE_URL` that silently evaluate to `undefined` at build time.
+
+## Who it's for
+
+Developers using Supabase Auth in a Next.js, Vite, or SvelteKit web app whose OAuth or magic-link sign-in works on `localhost` but breaks after deploying to Vercel, Netlify, Cloudflare Pages, or similar.
+
+## How it works
+
+Static HTML plus one dependency-free JavaScript file, `doctor-web.js`. All parsing and matching run in your browser against the values you type; the tool has no backend and makes no request that carries your configuration anywhere.
+
+## Privacy
+
+No account, no login, no cookies for the tool itself, no server-side processing of your config. The only analytics are anonymous usage counts (event name + count, never the content of what you pasted) sent to a self-hosted Umami instance.
+
+## Links
+
+- Tool: https://arling.sk/supabase-redirect-doctor/
+- Full reference (worked example + FAQ): https://arling.sk/supabase-redirect-doctor/llms-full.txt
+- Source code: https://github.com/AndryRoby/supabase-redirect-doctor
+- Sibling tool for Expo / React Native: https://arling.sk/expo-supabase-auth-doctor/
+- Hub (more ARLing tools): https://arling.sk/
+
+## Contact
+
+Built by ARLing s. r. o. (Bratislava, Slovakia). andrej@arling.sk

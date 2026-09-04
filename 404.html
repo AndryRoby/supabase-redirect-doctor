@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Page not found — Supabase Redirect Doctor</title>
+<meta name="robots" content="noindex" />
+<link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+<link rel="alternate icon" href="./favicon.ico" />
+<!-- No external font CDN: system font stack only (see body { font-family } below). -->
+<style>
+  :root {
+    --bg:        oklch(0.155 0.004 60);
+    --bg-2:      oklch(0.185 0.005 60);
+    --border:    oklch(0.305 0.007 60);
+    --border-2:  oklch(0.40 0.008 60);
+    --text:      oklch(0.965 0.003 80);
+    --text-2:    oklch(0.82 0.006 70);
+    --muted:     oklch(0.62 0.008 60);
+    --faint:     oklch(0.45 0.007 60);
+    --accent:    oklch(0.80 0.155 65);
+    --accent-2:  oklch(0.86 0.13 65);
+    --accent-ink: oklch(0.20 0.03 60);
+    --radius: 6px;
+    --radius-lg: 10px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  html { background: var(--bg); color: var(--text); }
+  body {
+    font-family: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    background:
+      radial-gradient(900px 500px at 80% -10%, oklch(0.24 0.02 65 / 0.5), transparent 60%),
+      radial-gradient(700px 400px at -10% 10%, oklch(0.22 0.015 250 / 0.35), transparent 60%),
+      var(--bg);
+    background-attachment: fixed;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .mono, code { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace; }
+  a { color: var(--text); text-decoration: none; }
+  a:hover { color: var(--accent-2); }
+  .card {
+    max-width: 520px;
+    width: 100%;
+    border: 1px solid var(--border);
+    background: var(--bg-2);
+    border-radius: var(--radius-lg);
+    padding: 40px 36px 36px;
+    text-align: center;
+  }
+  .brand {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 600; font-size: 14px; letter-spacing: -0.01em;
+    margin-bottom: 28px;
+  }
+  .brand-mark {
+    width: 22px; height: 22px;
+    background: var(--accent);
+    color: var(--accent-ink);
+    border-radius: 4px;
+    display: grid; place-items: center;
+    font-size: 12px; font-weight: 700;
+  }
+  .code404 {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0 0 10px;
+  }
+  .code404::before { content: "// "; color: var(--faint); }
+  h1 {
+    font-size: clamp(24px, 4vw, 30px);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin: 0 0 12px;
+  }
+  p.sub {
+    color: var(--text-2);
+    font-size: 15px;
+    margin: 0 0 28px;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    height: 42px; padding: 0 20px;
+    border-radius: var(--radius);
+    font-size: 14.5px; font-weight: 500;
+    background: var(--accent);
+    color: var(--accent-ink);
+    border: 1px solid var(--accent);
+    transition: background .12s ease, transform .06s ease;
+  }
+  .btn:hover { background: var(--accent-2); color: var(--accent-ink); }
+  .btn:active { transform: translateY(1px); }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="brand">
+      <span class="brand-mark">SD</span>
+      <span>Supabase Redirect Doctor</span>
+    </div>
+    <p class="code404">404</p>
+    <h1>This page doesn't exist.</h1>
+    <p class="sub">The redirect you followed didn't match anything here either — welcome to the club. Head back and paste your Supabase Auth config instead.</p>
+    <a class="btn" href="./">Back to Supabase Redirect Doctor</a>
+  </div>
+</body>
+</html>

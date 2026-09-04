@@ -1,0 +1,9 @@
+{
+  "name": "supabase-redirect-doctor",
+  "private": true,
+  "type": "module",
+  "description": "Supabase Auth Redirect Doctor for web apps — static, client-side diagnostic tool. No build step; this file only tells Node/browsers to treat doctor-web.js as an ES module.",
+  "scripts": {
+    "test": "node tests.mjs"
+  }
+}
