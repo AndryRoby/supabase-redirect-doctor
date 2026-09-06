@@ -18,7 +18,9 @@
 <link rel="apple-touch-icon" href="icon-192.png" />
 <link rel="manifest" href="manifest.json" />
 <link rel="alternate" type="text/plain" href="https://arling.sk/supabase-redirect-doctor/llms.txt" title="llms.txt" />
-<!-- No external font CDN: system font stack only (see body { font-family } below). -->
+<link rel="preload" href="/fonts/arling-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/arling-serif.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/style/paper.css">
 
 <script type="application/ld+json">
 {
@@ -109,128 +111,124 @@
 </script>
 
 <style>
-  :root {
-    --paper:#f6f2ea; --paper-2:#fbf9f4; --ink:#1b1a17; --ink-2:#4a4741; --muted:#66625a; --line:#d9d2c4;
-    --accent:#b23a1d; --accent-soft:#f3e2dc; --ok:#2f6f3e; --warn:#9a6b00;
-    --danger:var(--accent); --faint:var(--muted);
-    --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
-    --sans:system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    --mono:ui-monospace,"Cascadia Code",Consolas,Menlo,monospace;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root { --paper:#151412; --paper-2:#1d1b18; --ink:#efe9de; --ink-2:#c9c2b5; --muted:#8f887b; --line:#2e2b26; --accent:#e0623f; --accent-soft:#3a1f17; --ok:#7fbf8e; --warn:#e0b84a; }
-  }
+  /* Iba to, co je vlastne tomuto nastroju. Farby, pisma, nadpisy, tlacidla,
+     hlavicka, paticka, tabulky a pohyb su v /style/paper.css. */
+  :root { --accent-soft:#f3e2dc; --warn:#9a6b00; }
+  [hidden] { display:none !important; }
 
-  * { box-sizing:border-box; }
-  html { background:var(--paper); }
-  body { margin:0; color:var(--ink); background:var(--paper); font:16px/1.55 var(--sans); -webkit-font-smoothing:antialiased; }
-  a { color:inherit; text-decoration-color:var(--line); text-underline-offset:3px; }
-  a:hover { text-decoration-color:var(--accent); }
-  :focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
   .mono, code, pre, kbd, textarea.json-in { font-family:var(--mono); }
-  code { font-size:13.5px; background:var(--paper-2); border:1px solid var(--line); border-radius:3px; padding:1px 5px; overflow-wrap:anywhere; }
+  code { font-size:13.5px; background:var(--card); border:1px solid var(--line); border-radius:3px; padding:1px 5px; overflow-wrap:anywhere; }
 
-  .skip { position:absolute; left:-999px; top:8px; background:var(--ink); color:var(--paper); padding:8px 12px; z-index:100; }
-  .skip:focus { left:8px; }
-  .wrap { max-width:1040px; margin:0 auto; padding:0 24px; }
+  /* Hlavicka: nazov nastroja vedla wordmarku */
+  .brand span { white-space:nowrap; }
+  @media (max-width:380px) { .brand span { display:none; } }
+  /* bocny register az na sirokych obrazovkach, aby nesiahal do textu */
+  @media (max-width:1560px) { .rail { display:none; } }
 
-  /* Header */
-  header.top { position:sticky; top:0; z-index:20; background:var(--paper); border-bottom:1px solid var(--line); }
-  header.top .wrap { display:flex; align-items:center; justify-content:space-between; height:56px; gap:16px; }
-  .brand { display:flex; align-items:baseline; gap:10px; min-width:0; flex-wrap:wrap; }
-  .wordmark { font:600 19px/1 var(--serif); text-decoration:none; color:var(--ink); white-space:nowrap; }
-  .tagline { font:13px/1 var(--sans); color:var(--muted); text-decoration:none; letter-spacing:.02em; white-space:nowrap; }
-  .tagline:hover { color:var(--accent); }
-  nav.main { display:flex; gap:20px; flex-wrap:wrap; }
-  nav.main a { font-size:14px; text-decoration:none; color:var(--ink-2); white-space:nowrap; }
-  nav.main a:hover { color:var(--accent); }
-  @media (max-width:560px) { .tagline { display:none; } nav.main { gap:12px; } }
-  @media (max-width:420px) { .wordmark { font-size:16px; } }
+  /* Uvod: vlavo text, vpravo samotny nastroj ako artefakt */
+  .hero { grid-template-columns:7fr 6fr; align-items:center; }
+  @media (max-width:1080px) { .hero { grid-template-columns:1fr; } }
+  .hero h1 .mono { color:var(--accent); font-size:.86em; }
+  .facts { list-style:none; margin:22px 0 0; padding:0; display:flex; flex-wrap:wrap; gap:6px 0;
+    color:var(--muted); font-family:var(--ui); font-size:14px; }
+  /* Oddelovac patri na koniec predchadzajucej polozky, nie na zaciatok dalsej:
+     ked sa riadok na mobile zalomi, bodka ostane na konci hore a nezacina novy riadok. */
+  .facts li:not(:last-child)::after { content:"\00B7"; margin:0 10px; color:var(--line); }
+  .facts b { color:var(--ink); font-weight:600; }
+  /* Zalomenie dokazoveho riadku je urcene, nie nahodne: prazdna polozka .brk zlomi riadok
+     na presnom mieste a polozka pred nou strati oddelovac, takze bodka nikdy neostane
+     visiet na konci riadku. */
+  .facts li.brk { display:none; }
+  @media (min-width:1081px) {
+    .facts li.brk { display:block; flex:0 0 100%; height:0; margin:0; padding:0; }
+    .facts li.brk ~ li { margin-top:-6px; }
+    .facts li.lineend::after { content:none; }
+  }
+  .toolcol { min-width:0; }
+  .toolh { font:600 clamp(19px,1.6vw,23px)/1.25 var(--display); color:var(--ink);
+    letter-spacing:-.01em; margin:0 0 14px; max-width:28ch; }
+  .toolnote { font-family:var(--ui); font-size:13px; color:var(--muted); margin:11px 2px 0; max-width:60ch; }
 
-  /* Buttons */
-  .btn { display:inline-flex; align-items:center; gap:8px; font:600 14.5px/1 var(--sans); padding:12px 18px; border-radius:4px; text-decoration:none; border:1px solid transparent; cursor:pointer; }
-  .btn-solid { background:var(--accent); color:#fff; border-color:var(--accent); }
-  .btn-solid:hover { text-decoration:none; opacity:.92; }
-  .btn-line { border:2px solid var(--ink); color:var(--ink); background:transparent; padding:11px 17px; }
-  .btn-line:hover { text-decoration:none; background:var(--paper-2); }
-  .btn:disabled { opacity:.6; cursor:default; }
-  .btn + .btn { margin-left:10px; }
-
-  /* Compact utility buttons used inside the tool (also emitted by the script) */
-  .icon-btn { display:inline-flex; align-items:center; gap:6px; font:500 12px/1 var(--sans); padding:6px 10px; border:1px solid var(--line); border-radius:4px; background:transparent; color:var(--ink-2); cursor:pointer; }
-  .icon-btn:hover { border-color:var(--muted); color:var(--ink); background:var(--paper-2); }
+  /* Kompaktne tlacidla vnutri nastroja (skript ich tiez generuje) */
+  .icon-btn { display:inline-flex; align-items:center; gap:6px; font:500 12px/1 var(--ui); padding:6px 10px;
+    border:1px solid var(--line); border-radius:8px; background:transparent; color:var(--body); cursor:pointer; }
+  .icon-btn:hover { border-color:var(--muted); color:var(--ink); background:var(--card); }
   .icon-btn.btn-solid { background:var(--accent); color:#fff; border-color:var(--accent); font-weight:600; }
-  .icon-btn.btn-solid:hover { opacity:.92; background:var(--accent); }
+  .icon-btn.btn-solid:hover { background:var(--accent-dark); }
   .icon-btn:disabled { opacity:.6; cursor:default; }
 
-  /* Hero */
-  .hero { padding:56px 0 40px; border-bottom:1px solid var(--line); }
-  .hero h1 { font:400 clamp(30px,4.6vw,46px)/1.1 var(--serif); letter-spacing:-.01em; margin:0 0 18px; max-width:20ch; }
-  .hero h1 .mono { color:var(--accent); font-weight:600; font-size:.85em; }
-  .lead { font-size:18px; color:var(--ink-2); max-width:58ch; margin:0 0 26px; }
-  .hero-cta { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:26px; }
-  .facts { list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; gap:8px 0; color:var(--muted); font-size:14px; }
-  .facts li + li::before { content:"·"; margin:0 10px; color:var(--line); }
-  .facts b { color:var(--ink); font-weight:600; }
+  .sub { color:var(--body); max-width:64ch; margin:0 0 24px; }
 
-  /* Sections */
-  section.block { padding:44px 0; border-bottom:1px solid var(--line); }
-  .kicker { font:400 14px/1 var(--serif); color:var(--accent); letter-spacing:.06em; text-transform:uppercase; margin:0 0 10px; }
-  h2 { font:400 28px/1.18 var(--serif); margin:0 0 8px; letter-spacing:-.005em; max-width:26ch; }
-  .sub { color:var(--ink-2); max-width:64ch; margin:0 0 24px; }
-
-  /* 01 Problem: rules list */
-  .rules { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:26px 32px; margin:0; padding:0; list-style:none; counter-reset:r; }
+  /* 01 Tri dovody */
+  .rules { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr)); gap:26px var(--gap);
+    margin:0; padding:0; list-style:none; counter-reset:r; }
   .rules li { padding-top:14px; border-top:1px solid var(--line); min-width:0; }
-  .rules li::before { counter-increment:r; content:counter(r,decimal-leading-zero); font:400 14px/1 var(--serif); color:var(--accent); display:block; margin-bottom:8px; }
-  .rules b { display:block; font-weight:600; margin-bottom:4px; }
-  .rules p { margin:0; color:var(--ink-2); font-size:15px; overflow-wrap:anywhere; }
+  .rules li::before { counter-increment:r; content:counter(r,decimal-leading-zero);
+    font:500 12px/1 var(--ui); letter-spacing:.12em; color:var(--accent); display:block; margin-bottom:10px; }
+  .rules b { display:block; font:600 clamp(17px,1.3vw,19px)/1.3 var(--display); color:var(--ink); margin-bottom:6px; }
+  .rules p { margin:0; font-size:15.5px; overflow-wrap:anywhere; }
 
-  /* 02 Diagnose: playground */
-  .play { border:1px solid var(--line); background:var(--paper-2); border-radius:4px; overflow:hidden; }
-  .play-head { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:9px 14px; border-bottom:1px solid var(--line); font-family:var(--mono); font-size:12px; color:var(--muted); flex-wrap:wrap; }
-  .play-head .path { color:var(--ink-2); overflow-wrap:anywhere; }
+  /* Nastroj */
+  .play { border:1px solid var(--line); background:var(--paper-deep); border-radius:var(--radius); overflow:hidden;
+    box-shadow:0 10px 30px rgba(20,20,19,.07); }
+  .play-head { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:9px 14px;
+    border-bottom:1px solid var(--line); font-family:var(--mono); font-size:12px; color:var(--muted); flex-wrap:wrap; }
+  .play-head .path { color:var(--body); overflow-wrap:anywhere; }
   .play-head .method { color:var(--accent); }
   .play-head .runtime { color:var(--muted); white-space:nowrap; }
 
-  .play-body { display:grid; grid-template-columns:1fr 1fr; min-height:480px; }
-  @media (max-width:900px) { .play-body { grid-template-columns:1fr; } }
-  .pane { display:flex; flex-direction:column; min-width:0; background:var(--paper); }
-  .pane + .pane { border-left:1px solid var(--line); }
-  @media (max-width:900px) { .pane + .pane { border-left:none; border-top:1px solid var(--line); } }
-  .pane-head { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:9px 14px; border-bottom:1px solid var(--line); background:var(--paper-2); flex-wrap:wrap; }
+  .play-body { display:grid; grid-template-columns:1fr; }
+  .pane { display:flex; flex-direction:column; min-width:0; background:var(--card); }
+  .pane + .pane { border-top:1px solid var(--line); }
+  .pane-head { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:9px 14px;
+    border-bottom:1px solid var(--line); background:var(--paper-deep); flex-wrap:wrap; }
   .pane-title { font-family:var(--mono); font-size:11px; letter-spacing:.03em; text-transform:uppercase; color:var(--muted); }
   .pane-actions { display:flex; gap:6px; flex-wrap:wrap; }
 
   .tabs { display:flex; gap:4px; }
-  .tab-btn { background:transparent; border:1px solid var(--line); color:var(--muted); font:500 12px/1 var(--sans); padding:5px 10px; border-radius:4px; cursor:pointer; }
+  .tab-btn { background:transparent; border:1px solid var(--line); color:var(--muted); font:500 12px/1 var(--ui);
+    padding:5px 10px; border-radius:8px; cursor:pointer; }
   .tab-btn.active { background:var(--accent); color:#fff; border-color:var(--accent); font-weight:600; }
   .tab-btn:not(.active):hover { color:var(--ink); border-color:var(--muted); }
 
-  [hidden] { display:none !important; }
   .json-pane { display:flex; flex-direction:column; }
-  textarea.json-in { flex:1; width:100%; background:var(--paper); color:var(--ink); border:none; outline:none; resize:none; padding:16px 18px; font-size:13px; line-height:1.65; tab-size:2; min-height:420px; overflow-wrap:normal; }
-  .json-error { margin:0; padding:8px 18px; font-family:var(--mono); font-size:11.5px; color:var(--accent); background:var(--accent-soft); border-top:1px solid var(--line); overflow-wrap:anywhere; }
+  textarea.json-in { flex:1; width:100%; background:var(--card); color:var(--ink); border:none; outline:none;
+    resize:none; padding:14px 16px; font-size:13px; line-height:1.65; tab-size:2; min-height:280px; overflow-wrap:normal; }
+  .json-error { margin:0; padding:8px 16px; font-family:var(--mono); font-size:11.5px; color:var(--accent);
+    background:var(--accent-soft); border-top:1px solid var(--line); overflow-wrap:anywhere; }
 
-  #form-pane { flex:1; overflow:auto; padding:16px 18px; display:flex; flex-direction:column; gap:18px; min-height:420px; }
+  #form-pane { flex:1; overflow:auto; padding:14px 16px; display:flex; flex-direction:column; gap:16px; min-height:280px; }
   .form-section { display:flex; flex-direction:column; gap:10px; }
-  .form-section-title { font:500 11px/1 var(--sans); letter-spacing:.05em; text-transform:uppercase; color:var(--muted); border-bottom:1px solid var(--line); padding-bottom:6px; }
+  .form-section-title { font:500 11px/1 var(--ui); letter-spacing:.08em; text-transform:uppercase; color:var(--muted);
+    border-bottom:1px solid var(--line); padding-bottom:6px; }
   .field-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px 12px; }
   .field { display:flex; flex-direction:column; gap:4px; min-width:0; }
   .field.full { grid-column:1 / -1; }
-  .field label { font:12px/1.3 var(--sans); color:var(--muted); }
+  .field label { font:12px/1.3 var(--ui); color:var(--muted); }
   .field input[type="text"], .field select, .field textarea {
-    background:var(--paper-2); color:var(--ink); border:1px solid var(--line); border-radius:4px;
+    background:var(--paper); color:var(--ink); border:1px solid var(--line); border-radius:8px;
     padding:7px 9px; font-family:var(--mono); font-size:12.5px; outline:none; width:100%;
   }
   .field input:focus, .field select:focus, .field textarea:focus { border-color:var(--accent); }
   .field textarea { resize:vertical; min-height:50px; line-height:1.5; overflow-wrap:anywhere; }
   @media (max-width:480px) { .field-grid { grid-template-columns:1fr; } }
 
-  .output { flex:1; padding:16px 18px; font-family:var(--mono); font-size:13px; line-height:1.7; overflow:auto; min-height:420px; background:var(--paper); overflow-wrap:anywhere; }
+  .output { flex:1; padding:14px 16px; font-family:var(--mono); font-size:13px; line-height:1.7; overflow:auto;
+    min-height:220px; background:var(--card); overflow-wrap:anywhere; }
   .output .placeholder { color:var(--muted); font-size:13px; }
-  .output .placeholder .blink { display:inline-block; width:7px; height:14px; background:var(--muted); vertical-align:-2px; margin-left:2px; animation:blink 1.1s steps(2,end) infinite; }
+  .output .placeholder .blink { display:inline-block; width:7px; height:14px; background:var(--muted);
+    vertical-align:-2px; margin-left:2px; animation:blink 1.1s steps(2,end) infinite; }
   @keyframes blink { 50% { opacity:0; } }
+
+  /* Na desktope musi byt vstup aj vysledok vidiet bez scrollovania stranky */
+  @media (min-width:1081px) {
+    /* Vyska a pomer su zvolene tak, aby spodna hrana formulara padla do medzery medzi polia:
+       pri 430px a pomere 1.15:1 rezala riadok v polovici a z dalsieho pola trcal len
+       niekolkopixelovy pruzok horneho okraja. */
+    .play-body { height:540px; grid-template-rows:minmax(0,1.5fr) minmax(0,1fr); }
+    .pane { min-height:0; overflow:hidden; }
+    #form-pane, textarea.json-in, .output { min-height:0; }
+  }
 
   .out-line { white-space:pre-wrap; word-break:break-word; }
   .k { color:var(--ink); }
@@ -242,27 +240,39 @@
   .sev-medium { color:var(--warn); }
   .sev-low { color:var(--muted); }
 
-  .status-strip { display:flex; align-items:center; gap:14px; padding:9px 18px; border-top:1px solid var(--line); background:var(--paper-2); font-family:var(--mono); font-size:11.5px; color:var(--muted); flex-wrap:wrap; }
-  .status-pill { display:inline-flex; align-items:center; gap:6px; padding:2px 8px; border-radius:4px; border:1px solid var(--line); background:var(--paper); color:var(--ink-2); }
+  .status-strip { display:flex; align-items:center; gap:14px; padding:9px 16px; border-top:1px solid var(--line);
+    background:var(--paper-deep); font-family:var(--mono); font-size:11.5px; color:var(--muted); flex-wrap:wrap; }
+  .status-pill { display:inline-flex; align-items:center; gap:6px; padding:2px 8px; border-radius:6px;
+    border:1px solid var(--line); background:var(--card); color:var(--body); }
   .status-pill.fail { color:var(--accent); border-color:var(--accent); }
   .status-pill.warn { color:var(--warn); border-color:var(--warn); }
   .status-pill.pass { color:var(--ok); border-color:var(--ok); }
   #timing { margin-left:auto; white-space:nowrap; }
 
   .result { display:flex; flex-direction:column; gap:20px; }
-  .big-pill { display:inline-flex; align-items:center; font-family:var(--mono); font-size:12px; font-weight:600; padding:4px 10px; border-radius:4px; border:1px solid var(--line); text-transform:uppercase; letter-spacing:.03em; }
+  .big-pill { display:inline-flex; align-items:center; font-family:var(--mono); font-size:12px; font-weight:600;
+    padding:4px 10px; border-radius:6px; border:1px solid var(--line); text-transform:uppercase; letter-spacing:.03em; }
   .big-pill.pass { color:var(--ok); border-color:var(--ok); }
   .big-pill.warn { color:var(--warn); border-color:var(--warn); }
   .big-pill.fail { color:var(--accent); border-color:var(--accent); }
-  .result-summary { font-size:13.5px; color:var(--ink-2); line-height:1.6; margin:10px 0 0; }
+  .result-summary { font-size:13.5px; color:var(--body); line-height:1.6; margin:10px 0 0; }
 
+  /* Dvojstlpcova tabulka klucov, generuje ju skript; na mobile ostava tabulkou */
   .exp-table { width:100%; border-collapse:collapse; font-size:12.5px; }
   .exp-table td { padding:6px 8px; border-bottom:1px solid var(--line); vertical-align:top; overflow-wrap:anywhere; }
   .exp-table td.k { color:var(--muted); white-space:nowrap; padding-right:14px; }
   .exp-table td.v { color:var(--ink); word-break:break-all; }
   .exp-table tr:last-child td { border-bottom:none; }
+  @media (max-width:600px) {
+    .exp-table { display:table; }
+    .exp-table tbody { display:table-row-group; }
+    .exp-table tr { display:table-row; background:none; border:none; border-radius:0; margin:0; padding:0; }
+    .exp-table td { display:table-cell; padding:6px 8px; }
+    .exp-table td::before { content:none; }
+  }
 
-  .problem-item { border-left:3px solid var(--line); padding:8px 10px; background:var(--paper-2); border-radius:0 4px 4px 0; font-size:12.5px; line-height:1.5; overflow-wrap:anywhere; }
+  .problem-item { border-left:3px solid var(--line); padding:8px 10px; background:var(--paper-deep);
+    border-radius:0 8px 8px 0; font-size:12.5px; line-height:1.5; overflow-wrap:anywhere; }
   .problem-item + .problem-item { margin-top:8px; }
   .problem-item.high { border-color:var(--accent); }
   .problem-item.medium { border-color:var(--warn); }
@@ -273,82 +283,89 @@
   .problem-item.low .sev-tag { color:var(--muted); }
   .problem-item .where { color:var(--muted); font-family:var(--mono); font-size:10.5px; margin-top:3px; }
 
-  .fix-item { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; background:var(--paper-2); border:1px solid var(--line); border-radius:4px; padding:9px 10px; font-size:12px; }
+  .fix-item { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; background:var(--paper-deep);
+    border:1px solid var(--line); border-radius:8px; padding:9px 10px; font-size:12px; }
   .fix-item + .fix-item { margin-top:8px; }
   .fix-item .fix-body { min-width:0; flex:1; }
-  .fix-item .fix-title { color:var(--ink-2); margin-bottom:4px; }
+  .fix-item .fix-title { color:var(--body); margin-bottom:4px; }
   .fix-item .fix-title .where { color:var(--muted); }
   .fix-item .fix-value { font-family:var(--mono); color:var(--accent); word-break:break-all; margin:0; overflow-wrap:anywhere; }
   .fix-item .fix-value.multiline { white-space:pre-wrap; word-break:break-word; overflow-x:auto; }
   .fix-item .copy-fix-btn { flex-shrink:0; }
 
-  .checklist { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:7px; font-size:12.5px; color:var(--ink-2); }
+  .checklist { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:7px; font-size:12.5px; color:var(--body); }
   .checklist li { display:flex; gap:8px; line-height:1.5; }
   .checklist li::before { content:"\2610"; color:var(--accent); flex-shrink:0; }
 
-  .permalink-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:14px 18px 16px; border-top:1px solid var(--line); }
+  .permalink-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:12px 16px 14px;
+    border-top:1px solid var(--line); background:var(--paper-deep); }
   .permalink-hint { font-family:var(--mono); font-size:11px; color:var(--muted); }
 
-  .kbd { font-family:var(--mono); font-size:11px; padding:1px 6px; border-radius:3px; border:1px solid var(--line); background:var(--paper-2); color:var(--ink-2); }
+  .kbd { font-family:var(--mono); font-size:11px; padding:1px 6px; border-radius:3px; border:1px solid var(--line);
+    background:var(--paper-deep); color:var(--body); }
 
-  /* 03 How it works */
-  .endpoint { display:grid; grid-template-columns:1fr 1fr; gap:28px; align-items:start; }
-  @media (max-width:820px) { .endpoint { grid-template-columns:1fr; } }
-  .codeblock { border:1px solid var(--line); background:var(--paper-2); border-radius:4px; overflow:hidden; min-width:0; }
-  .codeblock-head { padding:9px 14px; border-bottom:1px solid var(--line); background:var(--paper); font-family:var(--mono); font-size:11px; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); display:flex; justify-content:space-between; align-items:center; }
-  .codeblock pre { margin:0; padding:16px 18px; font-size:12.5px; line-height:1.7; overflow-x:auto; color:var(--ink-2); background:var(--paper-2); }
-  .endpoint-copy p { margin:0 0 14px; color:var(--ink-2); font-size:15px; line-height:1.6; }
+  /* 03 Ako to funguje */
+  .endpoint { display:grid; grid-template-columns:1fr 1fr; gap:var(--gap); align-items:start; }
+  @media (max-width:900px) { .endpoint { grid-template-columns:1fr; } }
+  .codeblock { border:1px solid var(--line); background:var(--card); border-radius:var(--radius); overflow:hidden; min-width:0; }
+  .codeblock-head { padding:9px 14px; border-bottom:1px solid var(--line); background:var(--paper-deep);
+    font-family:var(--mono); font-size:11px; letter-spacing:.04em; text-transform:uppercase; color:var(--muted);
+    display:flex; justify-content:space-between; align-items:center; }
+  .codeblock pre { margin:0; padding:16px 18px; font-size:12.5px; line-height:1.7; overflow-x:auto;
+    color:var(--body); background:var(--card); border:none; border-radius:0; }
+  .endpoint-copy p { margin:0 0 14px; font-size:16px; }
   .endpoint-copy strong { color:var(--ink); }
 
-  /* 04 Free: ask pattern */
+  /* 04 Zadarmo: tmavy pas so zapisom na odber */
   .ask { display:flex; flex-wrap:wrap; align-items:center; gap:14px 24px; }
-  .ask p { margin:0; color:var(--ink-2); max-width:56ch; }
+  .ask p { margin:0; max-width:56ch; }
   .hp { position:absolute; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
   .subscribe-form { display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
-  .subscribe-form input[type="email"] { height:44px; min-width:0; flex:1 1 240px; padding:0 14px; border:1px solid var(--line); border-radius:4px; background:var(--paper-2); color:var(--ink); font:15px/1 var(--sans); }
+  .subscribe-form input[type="email"] { height:46px; min-width:0; flex:1 1 240px; padding:0 14px;
+    border:1px solid var(--line); border-radius:12px; background:var(--card); color:var(--ink); font:15px/1 var(--ui); }
   .subscribe-form input[type="email"]::placeholder { color:var(--muted); }
   .subscribe-form .btn { flex:none; }
   #subscribe-thanks { color:var(--ok); font-weight:600; }
   #subscribe-error { color:var(--accent); font-weight:600; }
-  @media (max-width: 480px) { .subscribe-form input[type="email"], .subscribe-form button { width:100%; } }
+  @media (max-width:480px) { .subscribe-form input[type="email"], .subscribe-form button { width:100%; } }
+  .band p, .band .sub { color:#c9c2b4; }
+  .band .rule { background:rgba(255,253,248,.18); }
+  .band .ask p b { color:#fffdf8; }
+  .band .subscribe-form input[type="email"] { background:#232220; border-color:#3a3835; color:#fffdf8; }
+  .band .subscribe-form input[type="email"]::placeholder { color:#8b8679; }
+  .band #subscribe-thanks { color:#9bc48d; }
+  .band #subscribe-error { color:var(--accent-light); }
 
-  /* details / FAQ (05) */
-  details { border-top:1px solid var(--line); padding:14px 0; }
+  /* 05 Otazky */
+  details { border-top:1px solid var(--line); padding:16px 0; }
   details:last-of-type { border-bottom:1px solid var(--line); }
-  summary { cursor:pointer; font:400 18px/1.3 var(--serif); list-style:none; display:flex; justify-content:space-between; gap:12px; }
+  summary { cursor:pointer; font:600 clamp(17px,1.3vw,19px)/1.35 var(--display); color:var(--ink);
+    list-style:none; display:block; position:relative; padding-right:26px; overflow-wrap:anywhere; }
   summary::-webkit-details-marker { display:none; }
-  summary::after { content:"+"; color:var(--accent); flex:none; font-family:var(--sans); }
+  summary::after { content:"+"; color:var(--accent); font-family:var(--ui); position:absolute; right:0; top:0; }
   details[open] summary::after { content:"\2013"; }
-  details p { color:var(--ink-2); margin:10px 0 0; max-width:70ch; overflow-wrap:anywhere; }
+  details p { margin:10px 0 0; max-width:70ch; overflow-wrap:anywhere; }
 
-  /* 06 About: two columns */
-  .two { display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr); gap:40px; }
-  .two p { color:var(--ink-2); }
+  /* 06 O nas */
+  .two { display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr); gap:var(--gap); }
   @media (max-width:820px) { .two { grid-template-columns:1fr; } }
 
-  /* Footer */
-  footer { padding:32px 0 56px; color:var(--muted); font-size:14px; }
-  footer .cols { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:20px 32px; }
+  footer .foot > div { max-width:38ch; }
   footer b { color:var(--ink); font-weight:600; }
-  footer a { color:var(--ink-2); }
-
-  @media (max-width:480px) {
-    .hero { padding:40px 0 30px; }
-    section.block { padding:36px 0; }
-  }
 </style>
 </head>
 <body>
+<div class="wash" aria-hidden="true"><i></i><i></i></div>
 
 <a class="skip" href="#playground">Skip to the diagnosis tool</a>
 
-<header class="top" id="top">
-  <div class="wrap">
-    <div class="brand">
-      <a class="wordmark" href="#top">Supabase Redirect Doctor</a>
-      <a class="tagline" href="https://arling.sk/">an ARLing tool</a>
-    </div>
-    <nav class="main" aria-label="Page">
+<header id="top">
+  <div class="wrap bar">
+    <a class="brand" href="https://arling.sk/">
+      <svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true"><defs><path id="m" fill-rule="evenodd" d="M16 2.5 L29 29.5 H3 Z M16 12.4 L22.4 25.6 H9.6 Z"/><clipPath id="mr"><rect x="16" width="16" height="32"/></clipPath></defs><use href="#m" fill="#141413"/><use href="#m" fill="#b23a1d" clip-path="url(#mr)"/></svg>
+      <b>ARLing</b><span>Supabase Redirect Doctor</span>
+    </a>
+    <nav aria-label="Page">
       <a href="#problem">Problem</a>
       <a href="#playground">Diagnose</a>
       <a href="#endpoint">How it works</a>
@@ -358,42 +375,26 @@
 </header>
 
 <main>
-  <div class="hero">
-    <div class="wrap">
-      <h1>Supabase OAuth redirects to <span class="mono">localhost</span> in production?</h1>
-      <p class="lead">Paste your Next.js, Vite, or SvelteKit config and your Supabase Auth settings. The tool finds the exact mismatch between Site URL, the redirect allow-list, your callback route, and the provider console, and gives you the fix.</p>
-      <div class="hero-cta">
-        <a href="#playground" class="btn btn-solid" data-umami-event="hero-diagnose">Diagnose your config</a>
-        <a href="https://github.com/AndryRoby/supabase-redirect-doctor" class="btn btn-line" target="_blank" rel="noopener">View source on GitHub</a>
+  <div class="wrap hero" id="hero">
+    <div>
+      <h1 id="h1"><span class="l">Supabase OAuth</span><span class="l">redirects to</span><span class="l"><span class="mono">localhost</span></span><span class="l">in production?</span></h1>
+      <p class="lead r d3">Paste your Next.js, Vite, or SvelteKit config and your Supabase Auth settings. The tool finds the exact mismatch between Site URL, the redirect allow-list, your callback route, and the provider console, and gives you the fix.</p>
+      <div class="cta r d4">
+        <a href="#playground" class="btn btn-solid" data-umami-event="hero_diagnose">Diagnose your config</a>
+        <a href="https://github.com/AndryRoby/supabase-redirect-doctor" class="btn btn-line" target="_blank" rel="noopener" data-umami-event="github_source">View source on GitHub</a>
       </div>
-      <ul class="facts">
+      <ul class="facts proof r d5">
         <li><b>0 €</b>, no account</li>
         <li>runs in your browser</li>
-        <li>Next.js, Vite, SvelteKit</li>
+        <li class="lineend">Next.js, Vite, SvelteKit</li>
+        <li class="brk" aria-hidden="true"></li>
         <li><b>87</b> automated tests behind the rules</li>
       </ul>
     </div>
-  </div>
 
-  <section id="problem" class="block">
-    <div class="wrap">
-      <p class="kicker">01</p>
-      <h2>Three reasons your OAuth redirect breaks in production.</h2>
-      <p class="sub">These show up on deploy day, not before, because locally the values happen to match by accident.</p>
-      <ol class="rules">
-        <li><b>Site URL still says localhost.</b><p>Supabase falls back to its Site URL whenever <code>redirectTo</code> is missing or not on the allow-list. Site URL still says <code>http://localhost:3000</code> because nobody changed it after the project was created.</p></li>
-        <li><b>www, apex, and trailing slashes don't match.</b><p>The Redirect URLs allow-list matches by glob, not by domain equivalence. An entry for <code>www.example.com</code> doesn't cover the apex domain, and a trailing slash breaks an exact match. Vercel and Netlify previews need their own wildcard pattern.</p></li>
-        <li><b>The callback route or the provider console is wrong.</b><p>PKCE needs a server route that calls <code>exchangeCodeForSession()</code>. Miss it and the code sits unused in the URL. Google and GitHub need the Supabase callback URL, not yours.</p></li>
-      </ol>
-    </div>
-  </section>
-
-  <section id="playground" class="block">
-    <div class="wrap">
+    <div class="toolcol r d2" id="playground">
       <p class="kicker">02</p>
-      <h2>Fill in your config. Get the exact mismatches.</h2>
-      <p class="sub">Nothing you type is sent anywhere. The check runs in your browser, using the same allow-list matching rules Supabase documents.</p>
-
+      <h2 class="toolh">Fill in your config. Get the exact mismatches.</h2>
       <div class="play">
         <div class="play-head">
           <div class="path"><span class="method">fn</span> RedirectDoctorWeb.diagnose(config)</div>
@@ -408,8 +409,8 @@
                 <button class="tab-btn" id="tab-json" type="button">JSON</button>
               </div>
               <div class="pane-actions">
-                <button class="icon-btn" id="reset-btn" type="button" title="Reset to example">example</button>
-                <button class="icon-btn btn-solid" id="run-btn" type="button">Diagnose &crarr;</button>
+                <button class="icon-btn" id="reset-btn" type="button" title="Reset to example" data-umami-event="tool_example">example</button>
+                <button class="icon-btn btn-solid" id="run-btn" type="button" data-umami-event="tool_run">Diagnose &crarr;</button>
               </div>
             </div>
 
@@ -543,8 +544,8 @@
             <div class="pane-head">
               <div class="pane-title">Result &middot; <span id="response-meta">idle</span></div>
               <div class="pane-actions">
-                <button class="icon-btn" id="raw-toggle-btn" type="button">raw JSON</button>
-                <button class="icon-btn" id="copy-btn" type="button">copy</button>
+                <button class="icon-btn" id="raw-toggle-btn" type="button" data-umami-event="tool_raw_json">raw JSON</button>
+                <button class="icon-btn" id="copy-btn" type="button" data-umami-event="tool_copy_result">copy</button>
               </div>
             </div>
             <div class="output" id="output">
@@ -561,21 +562,37 @@
         </div>
 
         <div class="permalink-row">
-          <button class="icon-btn" id="copy-link-btn" type="button">Copy link to this diagnosis</button>
+          <button class="icon-btn" id="copy-link-btn" type="button" data-umami-event="tool_copy_link">Copy link to this diagnosis</button>
           <span class="permalink-hint">Encodes your config into the URL. Nothing is stored on a server.</span>
         </div>
       </div>
+      <p class="toolnote">Nothing you type is sent anywhere. The check runs in your browser, using the same allow-list matching rules Supabase documents.</p>
+    </div>
+  </div>
+
+  <section id="problem" class="deep">
+    <div class="wrap">
+      <p class="kicker">01</p>
+      <h2 class="r">Three reasons your OAuth redirect breaks in production.</h2>
+      <p class="sub r d1">These show up on deploy day, not before, because locally the values happen to match by accident.</p>
+      <div class="rule"></div>
+      <ol class="rules">
+        <li class="r d1"><b>Site URL still says localhost.</b><p>Supabase falls back to its Site URL whenever <code>redirectTo</code> is missing or not on the allow-list. Site URL still says <code>http://localhost:3000</code> because nobody changed it after the project was created.</p></li>
+        <li class="r d2"><b>www, apex, and trailing slashes don't match.</b><p>The Redirect URLs allow-list matches by glob, not by domain equivalence. An entry for <code>www.example.com</code> doesn't cover the apex domain, and a trailing slash breaks an exact match. Vercel and Netlify previews need their own wildcard pattern.</p></li>
+        <li class="r d3"><b>The callback route or the provider console is wrong.</b><p>PKCE needs a server route that calls <code>exchangeCodeForSession()</code>. Miss it and the code sits unused in the URL. Google and GitHub need the Supabase callback URL, not yours.</p></li>
+      </ol>
     </div>
   </section>
 
-  <section id="endpoint" class="block">
+  <section id="endpoint">
     <div class="wrap">
       <p class="kicker">03</p>
-      <h2>One function. Config in, diagnosis out.</h2>
-      <p class="sub">No server, no SDK key, no signup. <code>doctor-web.js</code> is plain JavaScript. Read it, fork it, or call it directly from your own scripts or CI.</p>
+      <h2 class="r">One function. Config in, diagnosis out.</h2>
+      <p class="sub r d1">No server, no SDK key, no signup. <code>doctor-web.js</code> is plain JavaScript. Read it, fork it, or call it directly from your own scripts or CI.</p>
+      <div class="rule"></div>
 
       <div class="endpoint">
-        <div class="codeblock">
+        <div class="codeblock r d1">
           <div class="codeblock-head">
             <span>doctor-web.js</span>
             <span>0 dependencies</span>
@@ -602,7 +619,7 @@
 }</pre>
         </div>
 
-        <div class="endpoint-copy">
+        <div class="endpoint-copy r d2">
           <p><strong>Everything runs client-side.</strong> The form above calls this exact function in your browser. There is no backend, no API key, and no request that carries your config anywhere.</p>
           <p>It checks the callback URL your app will actually use against your Supabase redirect allow-list, glob-matched the same way Supabase matches it, your Site URL, and the exact callback your OAuth provider console expects.</p>
           <p>Open and free. Found a case it gets wrong? Open a GitHub issue. No ads, and no tracking beyond anonymous usage counts.</p>
@@ -611,17 +628,18 @@
     </div>
   </section>
 
-  <section id="pricing" class="block">
+  <section id="pricing" class="band">
     <div class="wrap">
       <p class="kicker">04</p>
-      <h2>Free.</h2>
-      <p class="sub">No account, no payment, no usage limit. This started as a tool I needed myself, so it stays free for the people already using it.</p>
-      <div class="ask subscribe-ask" id="subscribe">
+      <h2 class="r">Free.</h2>
+      <p class="sub r d1">No account, no payment, no usage limit. This started as a tool I needed myself, so it stays free for the people already using it.</p>
+      <div class="rule"></div>
+      <div class="ask subscribe-ask r d2" id="subscribe">
         <p><b>Tell me when a new tool lands.</b> New tools only. No newsletter, no sharing. Reply to any mail to be removed.</p>
         <form id="subscribe-form" class="subscribe-form" data-subscribe data-source="supabase-web" data-lang="en" data-thanks="subscribe-thanks" data-error="subscribe-error" novalidate>
           <div class="hp" aria-hidden="true"><input type="text" name="website" id="subscribe-website" tabindex="-1" autocomplete="off" /></div>
           <input type="email" id="subscribe-email" name="email" required autocomplete="email" inputmode="email" placeholder="you@example.com" aria-label="Email address" />
-          <button class="btn btn-solid" type="submit">Notify me</button>
+          <button class="btn btn-solid" type="submit" data-umami-event="subscribe_submit">Notify me</button>
         </form>
         <p id="subscribe-thanks" hidden>Thanks. You will hear from us only when something new is live.</p>
         <p id="subscribe-error" hidden>Could not save. Write to <a href="mailto:andrej@arling.sk">andrej@arling.sk</a>.</p>
@@ -629,17 +647,18 @@
     </div>
   </section>
 
-  <section class="block">
+  <section>
     <div class="wrap">
-      <p class="sub">Read-only, client-side analysis. Nothing you enter is sent anywhere: the check runs entirely in your browser against the values you typed, not your live project. Always verify in your own environment. Not affiliated with Supabase, Vercel, Netlify, Google, GitHub, Microsoft, or Discord.</p>
+      <p class="sub r">Read-only, client-side analysis. Nothing you enter is sent anywhere: the check runs entirely in your browser against the values you typed, not your live project. Always verify in your own environment. Not affiliated with Supabase, Vercel, Netlify, Google, GitHub, Microsoft, or Discord.</p>
     </div>
   </section>
 
-  <section id="faq" class="block">
+  <section id="faq" class="deep">
     <div class="wrap">
       <p class="kicker">05</p>
-      <h2>Questions developers actually search for.</h2>
-      <p class="sub">Straight answers to the same redirect questions this tool diagnoses, for when you want the answer without running the checker.</p>
+      <h2 class="r">Questions developers actually search for.</h2>
+      <p class="sub r d1">Straight answers to the same redirect questions this tool diagnoses, for when you want the answer without running the checker.</p>
+      <div class="rule"></div>
 
       <details>
         <summary>Why does Supabase OAuth redirect to <span class="mono">localhost</span> after deploying to Vercel?</summary>
@@ -668,24 +687,31 @@
     </div>
   </section>
 
-  <section id="about" class="block">
+  <section id="about">
     <div class="wrap two">
-      <div>
+      <div class="r">
         <p class="kicker">06</p>
-        <h2>One person in Bratislava, and a lot of automation.</h2>
+        <h2 class="r">One person in Bratislava, and a lot of automation.</h2>
         <p class="sub">ARLing is run by Andrej Lauko. AI agents write most of the code and this page; Andrej decides which problems are worth a tool and answers people. Found a case this tool gets wrong? Write to <a href="mailto:andrej@arling.sk">andrej@arling.sk</a> or open a <a href="https://github.com/AndryRoby/supabase-redirect-doctor/issues" target="_blank" rel="noopener">GitHub issue</a> with your config.</p>
       </div>
-      <div>
+      <div class="r d1">
         <p class="kicker">Also from ARLing</p>
-        <h2>Building an Expo or React Native app instead?</h2>
+        <h2 class="r d1">Building an Expo or React Native app instead?</h2>
         <p class="sub">The sibling tool covers Expo Go, development builds, and standalone apps with Supabase Auth: <a href="https://arling.sk/expo-supabase-auth-doctor/">Redirect Doctor for Expo and Supabase</a>. Or see the <a href="https://arling.sk/">full index of ARLing tools</a>.</p>
       </div>
     </div>
   </section>
 </main>
 
+<nav class="rail" aria-label="Page">
+  <a href="#problem" data-umami-event="index-problem"><i></i><span>Problem</span></a>
+  <a href="#playground" data-umami-event="index-playground"><i></i><span>Diagnose</span></a>
+  <a href="#endpoint" data-umami-event="index-endpoint"><i></i><span>How it works</span></a>
+  <a href="#faq" data-umami-event="index-faq"><i></i><span>FAQ</span></a>
+</nav>
+
 <footer>
-  <div class="wrap cols">
+  <div class="wrap foot">
     <div><b>ARLing s. r. o.</b><br>Ivanská cesta 32E<br>821 04 Bratislava, Slovakia</div>
     <div>Company ID 56583486<br>VAT ID SK2122352100<br><a href="mailto:andrej@arling.sk">andrej@arling.sk</a></div>
     <div><a href="https://arling.sk/supabase-redirect-doctor/llms.txt">llms.txt</a> &middot; <a href="https://github.com/AndryRoby/supabase-redirect-doctor" target="_blank" rel="noopener">source</a> &middot; <a href="https://arling.sk/expo-supabase-auth-doctor/">Expo sibling tool</a> &middot; <a href="https://arling.sk/">arling.sk</a> &middot; <a href="https://arling.sk/privacy/">Privacy</a><br>Provided as is, without warranty. Anonymous visit and click counts via self-hosted Umami; we never store what you type.</div>
@@ -1020,7 +1046,7 @@
     statusPill.className = 'status-pill';
     statusPill.textContent = 'idle';
     meta.textContent = 'idle';
-    timing.textContent = '—';
+    timing.textContent = 'not run yet';
   });
 
   copyBtn.addEventListener('click', async () => {
@@ -1113,5 +1139,64 @@
 
 <script src="subscribe.js" defer></script>
 <script defer src="https://homelab.tailbf8f27.ts.net/script.js" data-website-id="afa8b5d6-07f8-4560-a653-1abe50a5efd0"></script>
+<script>
+/* Pohyb, presne ako na /nahlad/: prichody cez IntersectionObserver, nadpis po slovach,
+   bocny register. Ziadna kniznica, ziadna slucka, prefers-reduced-motion vypina vsetko. */
+(function () {
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var hero = document.getElementById('hero');
+  if (reduce) {
+    document.querySelectorAll('.r, section').forEach(function (e) { e.classList.add('in'); });
+  }
+  if (!reduce && hero) {
+    requestAnimationFrame(function () {
+      hero.querySelectorAll('.r').forEach(function (e) { e.classList.add('in'); });
+    });
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) {
+      if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  }, { rootMargin: '0px 0px -12% 0px', threshold: 0.1 });
+  document.querySelectorAll('section').forEach(function (s) { io.observe(s); });
+
+  // nadpis sa objavi po slovach; riadok s vlastnou znackou prichadza vcelku
+  var h1 = document.getElementById('h1');
+  if (h1) {
+    var i = 0;
+    Array.prototype.forEach.call(h1.querySelectorAll('.l'), function (line) {
+      if (line.children.length) {
+        var sp = document.createElement('span');
+        sp.className = 'w';
+        sp.style.transitionDelay = (i++ * 0.06).toFixed(2) + 's';
+        while (line.firstChild) sp.appendChild(line.firstChild);
+        line.appendChild(sp);
+        return;
+      }
+      line.innerHTML = line.textContent.split(' ').map(function (w) {
+        var d = (i++ * 0.06).toFixed(2);
+        return '<span class="w" style="transition-delay:' + d + 's">' + w + '</span>';
+      }).join(' ');
+    });
+    requestAnimationFrame(function () { h1.classList.add('in'); });
+  }
+
+  // bocny register vie, ktora sekcia je v strede obrazovky
+  var rail = document.querySelector('.rail');
+  if (rail) {
+    var links = Array.prototype.slice.call(rail.querySelectorAll('a'));
+    var targets = links.map(function (a) { return document.querySelector(a.getAttribute('href')); });
+    var railIo = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        var i = targets.indexOf(en.target);
+        if (i < 0 || !en.isIntersecting) return;
+        links.forEach(function (a, j) { a.setAttribute('aria-current', j === i ? 'true' : 'false'); });
+      });
+      rail.classList.add('on');
+    }, { rootMargin: '-45% 0px -45% 0px' });
+    targets.forEach(function (t) { if (t) railIo.observe(t); });
+  }
+})();
+</script>
 </body>
 </html>

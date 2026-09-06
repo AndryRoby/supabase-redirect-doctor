@@ -1,52 +1,112 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://homelab.tailbf8f27.ts.net; connect-src 'self' https://homelab.tailbf8f27.ts.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <title>Page not found: Supabase Redirect Doctor</title>
-<meta name="robots" content="noindex" />
-<link rel="icon" href="./favicon.svg" type="image/svg+xml" />
-<link rel="alternate icon" href="./favicon.ico" />
-<!-- No external font CDN: system font stack only (see body { font-family } below). -->
+<meta name="robots" content="noindex">
+<link rel="icon" href="./favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="./favicon.ico">
+<link rel="preload" href="/fonts/arling-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/arling-serif.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/style/paper.css">
 <style>
-  :root {
-    --paper:#f6f2ea; --paper-2:#fbf9f4; --ink:#1b1a17; --ink-2:#4a4741; --muted:#66625a; --line:#d9d2c4;
-    --accent:#b23a1d;
-    --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
-    --sans:system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    --mono:ui-monospace,"Cascadia Code",Consolas,Menlo,monospace;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root { --paper:#151412; --paper-2:#1d1b18; --ink:#efe9de; --ink-2:#c9c2b5; --muted:#8f887b; --line:#2e2b26; --accent:#e0623f; }
-  }
-  * { box-sizing:border-box; }
-  html, body { margin:0; }
-  html { background:var(--paper); }
-  body {
-    color:var(--ink); background:var(--paper); font:16px/1.55 var(--sans); -webkit-font-smoothing:antialiased;
-    min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;
-  }
-  a { color:inherit; text-decoration-color:var(--line); text-underline-offset:3px; }
-  a:hover { text-decoration-color:var(--accent); }
-  :focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
-  .mono { font-family:var(--mono); }
-  .card { max-width:480px; width:100%; text-align:center; }
-  .kicker { font:400 14px/1 var(--serif); color:var(--accent); letter-spacing:.06em; text-transform:uppercase; margin:0 0 14px; }
-  h1 { font:400 clamp(28px,6vw,40px)/1.15 var(--serif); letter-spacing:-.01em; margin:0 0 14px; }
-  p.sub { color:var(--ink-2); font-size:15.5px; margin:0 0 28px; overflow-wrap:anywhere; }
-  .btn { display:inline-block; font:600 15px/1 var(--sans); padding:13px 20px; border-radius:4px; text-decoration:none; }
-  .btn-solid { background:var(--accent); color:#fff; }
-  .wordmark { display:block; font:600 15px/1 var(--serif); color:var(--muted); text-decoration:none; margin-bottom:34px; }
-  .wordmark:hover { color:var(--accent); }
+  /* Vzhlad je cely v /style/paper.css. Tu je len stred stranky. */
+  main { display:flex; align-items:center; min-height:calc(100vh - 200px); padding:clamp(40px,7vw,96px) 0; }
+  /* Jeden stlpec. Ku 404 neexistuje skutocna snimka nastroja a kreslenu scenu nepouzivame,
+     takze text dostane celu sirku merania namiesto prazdnej polovice. */
+  .split { display:block; }
+  .lost { max-width:34em; }
+  .lost .code { font-family:var(--ui); font-size:12px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--accent); margin:0 0 12px; }
+  .lost h1 { margin-bottom:clamp(12px,1.4vw,18px); }
+  .brand span { white-space:nowrap; }
+  @media (max-width:380px) { .brand span { display:none; } }
 </style>
 </head>
 <body>
-  <div class="card">
-    <a class="wordmark" href="./">Supabase Redirect Doctor</a>
-    <p class="kicker">404</p>
-    <h1>This page doesn't exist.</h1>
-    <p class="sub">The redirect you followed didn't match anything here either. Paste your Supabase Auth config on the tool page instead.</p>
-    <a class="btn btn-solid" href="./">Back to Supabase Redirect Doctor</a>
+<div class="wash" aria-hidden="true"><i></i><i></i></div>
+
+<header>
+  <div class="wrap bar">
+    <a class="brand" href="./">
+      <svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true"><defs><path id="m" fill-rule="evenodd" d="M16 2.5 L29 29.5 H3 Z M16 12.4 L22.4 25.6 H9.6 Z"/><clipPath id="mr"><rect x="16" width="16" height="32"/></clipPath></defs><use href="#m" fill="#141413"/><use href="#m" fill="#b23a1d" clip-path="url(#mr)"/></svg>
+      <b>ARLing</b><span>Supabase Redirect Doctor</span>
+    </a>
   </div>
+</header>
+
+<main id="hero">
+  <div class="wrap split">
+    <div class="lost">
+      <p class="code r">404</p>
+      <h1 id="h1"><span class="l">This page</span><span class="l">doesn't exist.</span></h1>
+      <p class="lead r d2">The redirect you followed didn't match anything here either. Paste your Supabase Auth config on the tool page instead.</p>
+      <div class="cta r d3"><a class="btn btn-solid" href="./" data-umami-event="404_back_to_tool">Back to Supabase Redirect Doctor</a></div>
+    </div>
+  </div>
+</main>
+
+<script>
+/* Pohyb, presne ako na /nahlad/: prichody cez IntersectionObserver, nadpis po slovach,
+   bocny register. Ziadna kniznica, ziadna slucka, prefers-reduced-motion vypina vsetko. */
+(function () {
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var hero = document.getElementById('hero');
+  if (reduce) {
+    document.querySelectorAll('.r, section').forEach(function (e) { e.classList.add('in'); });
+  }
+  if (!reduce && hero) {
+    requestAnimationFrame(function () {
+      hero.querySelectorAll('.r').forEach(function (e) { e.classList.add('in'); });
+    });
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) {
+      if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  }, { rootMargin: '0px 0px -12% 0px', threshold: 0.1 });
+  document.querySelectorAll('section').forEach(function (s) { io.observe(s); });
+
+  // nadpis sa objavi po slovach; riadok s vlastnou znackou prichadza vcelku
+  var h1 = document.getElementById('h1');
+  if (h1) {
+    var i = 0;
+    Array.prototype.forEach.call(h1.querySelectorAll('.l'), function (line) {
+      if (line.children.length) {
+        var sp = document.createElement('span');
+        sp.className = 'w';
+        sp.style.transitionDelay = (i++ * 0.06).toFixed(2) + 's';
+        while (line.firstChild) sp.appendChild(line.firstChild);
+        line.appendChild(sp);
+        return;
+      }
+      line.innerHTML = line.textContent.split(' ').map(function (w) {
+        var d = (i++ * 0.06).toFixed(2);
+        return '<span class="w" style="transition-delay:' + d + 's">' + w + '</span>';
+      }).join(' ');
+    });
+    requestAnimationFrame(function () { h1.classList.add('in'); });
+  }
+
+  // bocny register vie, ktora sekcia je v strede obrazovky
+  var rail = document.querySelector('.rail');
+  if (rail) {
+    var links = Array.prototype.slice.call(rail.querySelectorAll('a'));
+    var targets = links.map(function (a) { return document.querySelector(a.getAttribute('href')); });
+    var railIo = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        var i = targets.indexOf(en.target);
+        if (i < 0 || !en.isIntersecting) return;
+        links.forEach(function (a, j) { a.setAttribute('aria-current', j === i ? 'true' : 'false'); });
+      });
+      rail.classList.add('on');
+    }, { rootMargin: '-45% 0px -45% 0px' });
+    targets.forEach(function (t) { if (t) railIo.observe(t); });
+  }
+})();
+</script>
+<script defer src="https://homelab.tailbf8f27.ts.net/script.js" data-website-id="afa8b5d6-07f8-4560-a653-1abe50a5efd0"></script>
 </body>
 </html>
