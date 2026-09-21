@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-<script src="/style/vzhlad.js?v=dc0ce8df"></script>
+<script src="/style/vzhlad.js?v=2fa7f462"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://homelab.tailbf8f27.ts.net 'sha256-1daV0C8AGH0otEhOgGcEKdNn3PaWnfiI8IcAdMoqss0=' 'sha256-HGnNMikckBEQVS26cFl2R1ObOGu9oruyJmnAWYdzJyg=' 'sha256-OK87xsnA0uDALw7TnXSPetPp4gGXlNd++BlZomO6cng=' 'sha256-fo2+qHfT1vjTX+wGnFDYyCbWCIRKQ1j76QYbOky4QgY='; connect-src 'self' https://homelab.tailbf8f27.ts.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
@@ -27,7 +27,8 @@
 <link rel="alternate" type="text/plain" href="https://arling.sk/supabase-redirect-doctor/llms.txt" title="llms.txt" />
 <link rel="preload" href="/fonts/arling-sans.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/arling-serif.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/style/paper.css?v=2ebf5aa4">
+<link rel="stylesheet" href="/style/paper.css?v=4ee4d148">
+<link rel="stylesheet" href="/style/nastroj.css?v=c9081cae">
 <script src="/style/prepinac.js?v=668e98c9" defer></script>
 
 <script type="application/ld+json">
@@ -171,8 +172,7 @@
   .rules { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr)); gap:26px var(--gap);
     margin:0; padding:0; list-style:none; counter-reset:r; }
   .rules li { padding-top:14px; border-top:1px solid var(--line); min-width:0; }
-  .rules li::before { counter-increment:r; content:counter(r,decimal-leading-zero);
-    font:500 12px/1 var(--ui); letter-spacing:.12em; color:var(--accent); display:block; margin-bottom:10px; }
+  /* bez cisla: styri nezavisle pravidla nie su postupnost */
   .rules b { display:block; font:600 clamp(17px,1.3vw,19px)/1.3 var(--display); color:var(--ink); margin-bottom:6px; }
   .rules p { margin:0; font-size:15.5px; overflow-wrap:anywhere; }
 
@@ -190,7 +190,7 @@
   .pane + .pane { border-top:1px solid var(--line); }
   .pane-head { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:9px 14px;
     border-bottom:1px solid var(--line); background:var(--paper-deep); flex-wrap:wrap; }
-  .pane-title { font-family:var(--mono); font-size:11px; letter-spacing:.03em; text-transform:uppercase; color:var(--muted); }
+  .pane-title { font-family:var(--mono); font-size:11px; letter-spacing:0; text-transform:none; color:var(--muted); }
   .pane-actions { display:flex; gap:6px; flex-wrap:wrap; }
 
   .tabs { display:flex; gap:4px; }
@@ -207,7 +207,7 @@
 
   #form-pane { flex:1; overflow:auto; padding:14px 16px; display:flex; flex-direction:column; gap:16px; min-height:280px; }
   .form-section { display:flex; flex-direction:column; gap:10px; }
-  .form-section-title { font:500 11px/1 var(--ui); letter-spacing:.08em; text-transform:uppercase; color:var(--muted);
+  .form-section-title { font:500 11px/1 var(--ui); letter-spacing:0; text-transform:none; color:var(--muted);
     border-bottom:1px solid var(--line); padding-bottom:6px; }
   .field-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px 12px; }
   .field { display:flex; flex-direction:column; gap:4px; min-width:0; }
@@ -317,7 +317,7 @@
   @media (max-width:900px) { .endpoint { grid-template-columns:1fr; } }
   .codeblock { border:1px solid var(--line); background:var(--card); border-radius:var(--radius); overflow:hidden; min-width:0; }
   .codeblock-head { padding:9px 14px; border-bottom:1px solid var(--line); background:var(--paper-deep);
-    font-family:var(--mono); font-size:11px; letter-spacing:.04em; text-transform:uppercase; color:var(--muted);
+    font-family:var(--mono); font-size:11px; letter-spacing:0; text-transform:none; color:var(--muted);
     display:flex; justify-content:space-between; align-items:center; }
   .codeblock pre { margin:0; padding:16px 18px; font-size:12.5px; line-height:1.7; overflow-x:auto;
     color:var(--body); background:var(--card); border:none; border-radius:0; }
@@ -362,7 +362,7 @@
   footer b { color:var(--ink); font-weight:600; }
 </style>
 </head>
-<body class="noc">
+<body class="noc nastroj">
 <div class="wash" aria-hidden="true"><i></i><i></i></div>
 
 <a class="skip site-skip" href="#arling-obsah" data-site-label="skip">Skip to content</a>
@@ -372,34 +372,43 @@
       <svg viewBox="0 0 488 215" width="38" height="15" aria-hidden="true" focusable="false"><path fill="#f4f4f7" fill-rule="evenodd" d="M0.00,213.00L74.00,214.00L181.00,85.00L285.00,214.00L360.00,214.00L206.00,21.00L185.00,4.00L164.00,10.00Z M221.00,0.00L263.00,50.00L395.00,50.00L409.00,55.00L419.00,76.00L401.00,96.00L313.00,98.00L411.00,214.00L487.00,214.00L422.00,139.00L457.00,123.00L482.00,88.00L482.00,48.00L463.00,19.00L417.00,0.00Z"/><path fill="#f2643c" d="M269.00,66.00L269.00,67.00L268.00,68.00L268.00,70.00L267.00,71.00L267.00,76.00L268.00,77.00L268.00,79.00L270.00,81.00L270.00,82.00L271.00,82.00L273.00,84.00L274.00,84.00L277.00,86.00L279.00,86.00L280.00,87.00L287.00,87.00L288.00,86.00L290.00,86.00L291.00,85.00L294.00,84.00L298.00,80.00L298.00,79.00L299.00,78.00L299.00,75.00L300.00,74.00L300.00,72.00L299.00,71.00L299.00,69.00L298.00,68.00L297.00,65.00L295.00,63.00L294.00,63.00L289.00,60.00L278.00,60.00L277.00,61.00L276.00,61.00L275.00,62.00L272.00,63.00Z"/></svg>
       <b>ARLing</b><span>Supabase Redirect Doctor</span>
     </a>
-    <details class="site-menu" open>
-      <summary class="site-menu-toggle"><svg viewBox="0 0 18 12" fill="none" aria-hidden="true"><path d="M1 1h16M1 6h16M1 11h16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span data-site-label="menu">Menu</span></summary>
-      <div class="site-menu-panel"><nav id="hlavne-menu" class="site-main-nav" aria-label="Main navigation" data-site-aria="nav"><a href="https://arling.sk/shop/" data-site-nav="0">Shop</a><a href="https://arling.sk/en/#tools" data-site-nav="1">Tools</a><a href="https://arling.sk/games/" data-site-nav="2">Free puzzles</a><a href="https://arling.sk/notes/en/" data-site-nav="3">Notes</a><a href="https://arling.sk/ucet/en/" data-site-nav="4">Account</a></nav><div class="site-page-links"><p data-site-label="stranka">On this page</p><nav aria-label="On this page" data-site-aria="stranka"><a href="#problem">Problem</a><a href="#playground">Diagnose</a><a href="#endpoint">How it works</a><a href="#faq">FAQ</a></nav></div></div>
+    <details class="site-menu">
+      <summary class="site-menu-toggle"><span class="site-menu-text" data-site-label="produkty">Products</span><span class="site-menu-bars" aria-hidden="true"><i></i><i></i><i></i></span><span class="site-menu-word" data-site-label="menu">Menu</span></summary>
+      <div class="site-menu-panel" role="navigation" aria-label="Products" data-site-aria="produkty"><div class="site-cols"><div class="site-col"><p>Business software</p><ul><li><a href="https://arling.sk/proof/"><b>Proof</b><span>Customer approval before printing</span></a></li><li><a href="https://arling.sk/renewals/"><b>Renewals</b><span>Supplier documents and renewal dates</span></a></li><li><a href="https://arling.sk/asistent/"><b>Asistent<em class="site-sk">SK</em></b><span>Sales assistant for e-shops</span></a></li></ul></div><div class="site-col"><p>Invoices and payments</p><ul><li><a href="https://arling.sk/efaktura/en/"><b>E-invoice</b><span>Check, preview and create XML</span></a></li><li><a href="https://arling.sk/sepa-pain001-doctor/"><b>pain.001 check</b><span>Why the bank rejected the file</span></a></li><li><a href="https://arling.sk/sepa-pain001-generator/"><b>pain.001 generator</b><span>Bulk transfer from a table</span></a></li><li><a href="https://arling.sk/camt053-to-excel/"><b>Statement to Excel</b><span>camt.053 and MT940 to a sheet</span></a></li><li><a href="https://arling.sk/parovac-platieb/"><b>Payment matcher<em class="site-sk">SK</em></b><span>Statement against invoices</span></a></li><li><a href="https://arling.sk/kontrola-suboru/en/"><b>SEPA file check</b><span>Before the November 2026 change</span></a></li><li><a href="https://arling.sk/bankove-nastroje/"><b>Banking tools Pro<em class="site-sk">SK</em></b><span>One licence, four tools</span></a></li></ul></div><div class="site-col"><p>Documents and company</p><ul><li><a href="https://arling.sk/gdpr-dokumenty/"><b>GDPR documents<em class="site-sk">SK</em></b><span>For a company or e-shop in 10 minutes</span></a></li><li><a href="https://arling.sk/vzory-zmluv/"><b>Contract templates<em class="site-sk">SK</em></b><span>Under Slovak law, free</span></a></li><li><a href="https://arling.sk/zivotopis/en/"><b>CV builder</b><span>A finished CV, no account</span></a></li><li><a href="https://arling.sk/feed-doctor/"><b>Feed Doctor</b><span>Product feed check</span></a></li><li><a href="https://arling.sk/mail-doctor/"><b>Mail Doctor</b><span>SPF, DKIM and DMARC of a domain</span></a></li></ul></div><div class="site-col"><p>Publishing</p><ul><li><a href="https://arling.sk/shop/"><b>Shop</b><span>Books, puzzles and gifts</span></a></li><li><a href="https://arling.sk/classics/"><b>Classics for e-ink</b><span>Books prepared for e-readers</span></a></li><li><a href="https://arling.sk/morning-quiet/"><b>Morning Quiet</b><span>Daily editions for e-ink</span></a></li><li><a href="https://arling.sk/games/"><b>Browser games</b><span>A free daily logic puzzle</span></a></li><li><a href="https://arling.sk/puzzle-post/"><b>Puzzle Post</b><span>Puzzles by post</span></a></li><li><a href="https://arling.sk/memory-post/"><b>Memory Post</b><span>Memories on paper</span></a></li></ul></div></div><p class="site-dev"><span>For developers</span><a href="https://arling.sk/cors-doctor/">CORS</a><a href="https://arling.sk/jwt-doctor/">JWT</a><a href="https://arling.sk/cookie-samesite-doctor/">Cookie SameSite</a><a href="https://arling.sk/redirect-loop-doctor/">Redirect loop</a><a href="https://arling.sk/stripe-webhook-doctor/">Stripe webhook</a><a href="https://arling.sk/firebase-auth-domain-doctor/">Firebase auth</a><a href="https://arling.sk/google-oauth-redirect-doctor/">Google OAuth</a><a href="https://arling.sk/supabase-redirect-doctor/">Supabase redirect</a><a href="https://arling.sk/flutter-supabase-doctor/">Flutter + Supabase</a><a href="https://arling.sk/expo-universal-links-doctor/">Expo links</a><a href="https://arling.sk/expo-supabase-auth-doctor/">Expo + Supabase</a><a href="https://arling.sk/api/">Puzzle API</a></p><div class="site-col site-firma"><p>Company</p><ul><li><a href="https://arling.sk/en/#nastroje"><b>Tools</b></a></li><li><a href="https://arling.sk/en/#piloty"><b>Pilots</b></a></li><li><a href="https://arling.sk/how-we-work/en/"><b>How we work</b></a></li><li><a href="https://arling.sk/notes/en/"><b>Guides</b></a></li><li><a href="https://arling.sk/kontakt/"><b>Contact</b></a></li><li><a href="https://arling.sk/ucet/"><b>Account</b></a></li><li><a href="https://arling.sk/brand/"><b>Brand</b></a></li><li><a href="https://arling.sk/podmienky/en/"><b>Terms</b></a></li><li><a href="https://arling.sk/privacy/"><b>Privacy</b></a></li><li><a href="https://arling.sk/impressum/"><b>Imprint</b></a></li></ul></div><p class="site-menu-cta"><a class="site-cta" href="https://arling.sk/proof/" data-site-cta data-site-label="cta" data-umami-event="shell_cta_menu">Try Proof free</a></p></div>
     </details>
+    <nav id="hlavne-menu" class="site-main-nav" aria-label="Main navigation" data-site-aria="nav"><a href="https://arling.sk/en/#nastroje" data-site-nav="0">Tools</a><a href="https://arling.sk/en/#piloty" data-site-nav="1">Pilots</a><a href="https://arling.sk/notes/en/" data-site-nav="2">Guides</a><a href="https://arling.sk/how-we-work/en/" data-site-nav="3">Company</a></nav>
+    <a class="site-cta" href="https://arling.sk/proof/" data-site-cta data-site-label="cta" data-umami-event="shell_cta">Try Proof free</a>
   </div>
+  <div class="site-page-links"><div class="wrap"><p data-site-label="stranka">On this page</p><nav aria-label="On this page" data-site-aria="stranka"><a href="#problem">Problem</a><a href="#playground">Diagnose</a><a href="#endpoint">How it works</a><a href="#faq">FAQ</a></nav></div></div>
 </header>
 
 <main id="arling-obsah" tabindex="-1">
-  <div class="wrap hero" id="hero">
+  <div class="wrap uv-lead" id="hero">
+  <p class="uv-masthead"><span>Supabase Auth Redirect Doctor</span><span>Tools for work</span><span>ARLing s. r. o., Bratislava</span></p>
+  <div class="uv-lead-grid">
     <div>
-      <h1 id="h1"><span class="l">Supabase OAuth</span><span class="l">redirects to</span><span class="l"><span class="mono">localhost</span></span><span class="l">in production?</span></h1>
-      <p class="lead r d3">Paste your Next.js, Vite, or SvelteKit config and your Supabase Auth settings. The tool finds the exact mismatch between Site URL, the redirect allow-list, your callback route, and the provider console, and gives you the fix.</p>
-      <div class="cta r d4">
-        <a href="#playground" class="btn btn-solid" data-umami-event="hero_diagnose">Diagnose your config</a>
-        <a href="https://github.com/AndryRoby/supabase-redirect-doctor" class="btn btn-line" target="_blank" rel="noopener" data-umami-event="github_source">View source on GitHub</a>
-      </div>
-      <ul class="facts proof r d5">
-        <li><b>0 €</b>, no account</li>
-        <li>runs in your browser</li>
-        <li class="lineend">Next.js, Vite, SvelteKit</li>
-        <li class="brk" aria-hidden="true"></li>
-        <li><b>87</b> automated tests behind the rules</li>
-      </ul>
+      <h1 id="h1">See why Supabase sends your user to the wrong URL.</h1>
+      <p class="uv-lead-p">Paste your Next.js, Vite, or SvelteKit config and your Supabase Auth settings. The tool finds the exact mismatch between Site URL, the redirect allow-list, your callback route, and the provider console, and gives you the fix.</p>
+      <p class="uv-actions">
+        <a class="btn btn-solid" href="#playground" data-umami-event="hero-diagnose">Diagnose yours</a>
+        <a class="uv-quiet" href="https://github.com/AndryRoby/supabase-redirect-doctor" target="_blank" rel="noopener" data-umami-event="hero-github">Source code on GitHub</a>
+      </p>
+      <dl class="uv-facts">
+        <div><dt>Free</dt><dd>Every check and every finding, with no account and no limit.</dd></div>
+        <div><dt>Paid</dt><dd>Nothing. This tool has no paid version and no sign-up.</dd></div>
+        <div><dt>Limits</dt><dd>Next.js, Vite and SvelteKit covered, behind <b>87</b> automated tests.</dd></div>
+        <div><dt>Your data</dt><dd>Nothing leaves your browser. There is no backend of ours behind this page.</dd></div>
+      </dl>
     </div>
+    <figure class="uv-lead-art">
+      <img src="nahlad/vystup.png" width="1242" height="1360" loading="eager" fetchpriority="high" decoding="async" alt="The tool after a diagnosis: a verdict and the rules that fired, each with the setting it points at.">
+      <figcaption>A real diagnosis of the configuration the tool opens with, run on this page. Nothing was sent to a server of ours; you can repeat it below.</figcaption>
+    </figure>
+  </div>
+</div>
 
-    <div class="toolcol r d2" id="playground">
-      <p class="kicker">02</p>
-      <h2 class="toolh">Fill in your config. Get the exact mismatches.</h2>
+<div class="wrap hero-tool">
+  <div class="toolcol r d2" id="playground">
       <div class="play">
         <div class="play-head">
           <div class="path"><span class="method">fn</span> RedirectDoctorWeb.diagnose(config)</div>
@@ -577,7 +586,6 @@
 
   <section id="problem" class="deep">
     <div class="wrap">
-      <p class="kicker">01</p>
       <h2 class="r">Three reasons your OAuth redirect breaks in production.</h2>
       <p class="sub r d1">These show up on deploy day, not before, because locally the values happen to match by accident.</p>
       <div class="rule"></div>
@@ -591,7 +599,6 @@
 
   <section id="endpoint">
     <div class="wrap">
-      <p class="kicker">03</p>
       <h2 class="r">One function. Config in, diagnosis out.</h2>
       <p class="sub r d1">No server, no SDK key, no signup. <code>doctor-web.js</code> is plain JavaScript. Read it, fork it, or call it directly from your own scripts or CI.</p>
       <div class="rule"></div>
@@ -635,7 +642,6 @@
 
   <section id="pricing" class="band">
     <div class="wrap">
-      <p class="kicker">04</p>
       <h2 class="r">Free.</h2>
       <p class="sub r d1">No account, no payment, no usage limit. This started as a tool I needed myself, so it stays free for the people already using it.</p>
       <div class="rule"></div>
@@ -647,7 +653,7 @@
           <button class="btn btn-solid" type="submit" data-umami-event="subscribe_submit">Notify me</button>
         </form>
         <p id="subscribe-thanks" hidden>Thanks. You will hear from us only when something new is live.</p>
-        <p id="subscribe-error" hidden>Could not save. Write to <a href="mailto:andrej@arling.sk">andrej@arling.sk</a>.</p>
+        <p id="subscribe-error" hidden>Could not save. Write to <a href="mailto:andrej@arling.sk" data-umami-event="klik_email" data-umami-event-produkt="supabase-redirect-doctor">andrej@arling.sk</a>.</p>
       </div>
     </div>
   </section>
@@ -660,7 +666,6 @@
 
   <section id="faq" class="deep">
     <div class="wrap">
-      <p class="kicker">05</p>
       <h2 class="r">Questions developers actually search for.</h2>
       <p class="sub r d1">Straight answers to the same redirect questions this tool diagnoses, for when you want the answer without running the checker.</p>
       <div class="rule"></div>
@@ -695,17 +700,32 @@
   <section id="about">
     <div class="wrap two">
       <div class="r">
-        <p class="kicker">06</p>
         <h2 class="r">One person in Bratislava, and a lot of automation.</h2>
-        <p class="sub">ARLing is run by ARLing s. r. o.. AI agents write most of the code and this page; Andrej decides which problems are worth a tool and answers people. Found a case this tool gets wrong? Write to <a href="mailto:andrej@arling.sk">andrej@arling.sk</a> or open a <a href="https://github.com/AndryRoby/supabase-redirect-doctor/issues" target="_blank" rel="noopener">GitHub issue</a> with your config.</p>
+        <p class="sub">ARLing is run by ARLing s. r. o.. AI agents write most of the code and this page; Andrej decides which problems are worth a tool and answers people. Found a case this tool gets wrong? Write to <a href="mailto:andrej@arling.sk" data-umami-event="klik_email" data-umami-event-produkt="supabase-redirect-doctor">andrej@arling.sk</a> or open a <a href="https://github.com/AndryRoby/supabase-redirect-doctor/issues" target="_blank" rel="noopener">GitHub issue</a> with your config.</p>
       </div>
       <div class="r d1">
-        <p class="kicker">Also from ARLing</p>
         <h2 class="r d1">Building an Expo or React Native app instead?</h2>
         <p class="sub">The sibling tool covers Expo Go, development builds, and standalone apps with Supabase Auth: <a href="https://arling.sk/expo-supabase-auth-doctor/">Redirect Doctor for Expo and Supabase</a>. Or see the <a href="https://arling.sk/">full index of ARLing tools</a>.</p>
       </div>
     </div>
   </section>
+<section class="uv-colophon" id="tirag">
+  <div class="wrap">
+    <h2 class="r">Who publishes this and how it works.</h2>
+    <dl class="uv-colophon-rows">
+      <div><dt>Publisher</dt><dd>ARLing s. r. o., Ivanská cesta 32E, 821 04 Bratislava, Slovakia. Company number 56583486, VAT ID SK2122352100.</dd></div>
+      <div><dt>Who makes it</dt><dd>Written and maintained by one person in Bratislava. The source is public on <a href="https://github.com/AndryRoby/supabase-redirect-doctor">GitHub</a>.</dd></div>
+      <div><dt>Payment and delivery</dt><dd>Nothing is paid for and nothing is unlocked. The answer appears in the page as soon as the check runs.</dd></div>
+      <div><dt>Sample and terms</dt><dd>The tool opens with a worked example, so you can see a real result before you paste your own.</dd></div>
+      <div><dt>Reply</dt><dd>We answer <a href="mailto:andrej@arling.sk" data-umami-event="klik_email" data-umami-event-produkt="supabase-redirect-doctor">andrej@arling.sk</a> within 24 hours.</dd></div>
+      <div><dt>What it is not</dt><dd>We are not the vendor whose error you are chasing. The tool reads what you paste and names the rule; it changes nothing on your side.</dd></div>
+    </dl>
+    <p class="uv-colophon-akcie">
+      <a class="btn btn-line" href="https://arling.sk/podmienky/">Terms</a>
+      <a class="btn btn-line" href="https://arling.sk/privacy/">Privacy</a>
+    </p>
+  </div>
+</section>
 </main>
 
 <nav class="rail" aria-label="Page">
@@ -715,11 +735,13 @@
   <a href="#faq" data-umami-event="index-faq"><i></i><span>FAQ</span></a>
 </nav>
 
-<footer>
+<footer class="site-footer">
   <div class="wrap foot">
-    <div><b>ARLing s. r. o.</b><br>Ivanská cesta 32E<br>821 04 Bratislava, Slovakia</div>
-    <div>Company ID 56583486<br>VAT ID SK2122352100<br><a href="mailto:andrej@arling.sk">andrej@arling.sk</a></div>
-    <div><a href="https://arling.sk/shop/">shop</a> · <a href="https://arling.sk/privacy/en/">privacy</a> · <a href="https://arling.sk/podmienky/en/">terms</a> · <a href="https://arling.sk/gdpr/en/">GDPR</a> · <a href="https://arling.sk/impressum/en/">Impressum</a> · <a href="https://arling.sk/llms.txt">llms.txt</a> · <a href="https://arling.sk/sitemap-index.xml">sitemap</a><br>Tools are provided as is, without warranty. Anonymous visit counts via self-hosted Umami.</div>
+    <div class="site-foot-top"><div><a class="site-brand" href="https://arling.sk/en/" aria-label="ARLing home" data-site-home><svg viewBox="0 0 488 215" width="38" height="15" aria-hidden="true" focusable="false"><path fill="#f4f4f7" fill-rule="evenodd" d="M0.00,213.00L74.00,214.00L181.00,85.00L285.00,214.00L360.00,214.00L206.00,21.00L185.00,4.00L164.00,10.00Z M221.00,0.00L263.00,50.00L395.00,50.00L409.00,55.00L419.00,76.00L401.00,96.00L313.00,98.00L411.00,214.00L487.00,214.00L422.00,139.00L457.00,123.00L482.00,88.00L482.00,48.00L463.00,19.00L417.00,0.00Z"/><path fill="#f2643c" d="M269.00,66.00L269.00,67.00L268.00,68.00L268.00,70.00L267.00,71.00L267.00,76.00L268.00,77.00L268.00,79.00L270.00,81.00L270.00,82.00L271.00,82.00L273.00,84.00L274.00,84.00L277.00,86.00L279.00,86.00L280.00,87.00L287.00,87.00L288.00,86.00L290.00,86.00L291.00,85.00L294.00,84.00L298.00,80.00L298.00,79.00L299.00,78.00L299.00,75.00L300.00,74.00L300.00,72.00L299.00,71.00L299.00,69.00L298.00,68.00L297.00,65.00L295.00,63.00L294.00,63.00L289.00,60.00L278.00,60.00L277.00,61.00L276.00,61.00L275.00,62.00L272.00,63.00Z"/></svg><b>ARLing</b></a><p class="site-foot-firma">ARLing s. r. o., company ID <span class="num">56583486</span>, Bratislava. Own server in the European Union. Software for companies, freelancers and individuals.</p></div><a class="site-cta" href="https://arling.sk/proof/" data-umami-event="shell_footer_cta">Try Proof free<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a></div>
+    <div class="site-foot-cols"><div><p>Business software</p><ul><li><a href="https://arling.sk/proof/">Proof</a></li><li><a href="https://arling.sk/renewals/">Renewals</a></li><li><a href="https://arling.sk/asistent/">Asistent<em class="site-sk">SK</em></a></li></ul></div><div><p>Invoices and payments</p><ul><li><a href="https://arling.sk/efaktura/en/">E-invoice</a></li><li><a href="https://arling.sk/sepa-pain001-doctor/">pain.001 check</a></li><li><a href="https://arling.sk/sepa-pain001-generator/">pain.001 generator</a></li><li><a href="https://arling.sk/camt053-to-excel/">Statement to Excel</a></li><li><a href="https://arling.sk/parovac-platieb/">Payment matcher<em class="site-sk">SK</em></a></li><li><a href="https://arling.sk/kontrola-suboru/en/">SEPA file check</a></li><li><a href="https://arling.sk/bankove-nastroje/">Banking tools Pro<em class="site-sk">SK</em></a></li></ul></div><div><p>Documents and company</p><ul><li><a href="https://arling.sk/gdpr-dokumenty/">GDPR documents<em class="site-sk">SK</em></a></li><li><a href="https://arling.sk/vzory-zmluv/">Contract templates<em class="site-sk">SK</em></a></li><li><a href="https://arling.sk/zivotopis/en/">CV builder</a></li><li><a href="https://arling.sk/feed-doctor/">Feed Doctor</a></li><li><a href="https://arling.sk/mail-doctor/">Mail Doctor</a></li></ul></div><div><p>Publishing</p><ul><li><a href="https://arling.sk/shop/">Shop</a></li><li><a href="https://arling.sk/classics/">Classics for e-ink</a></li><li><a href="https://arling.sk/morning-quiet/">Morning Quiet</a></li><li><a href="https://arling.sk/games/">Browser games</a></li><li><a href="https://arling.sk/puzzle-post/">Puzzle Post</a></li><li><a href="https://arling.sk/memory-post/">Memory Post</a></li></ul></div><div><p>Company</p><ul><li><a href="https://arling.sk/how-we-work/en/">How we work</a></li><li><a href="https://arling.sk/notes/en/">Guides</a></li><li><a href="https://arling.sk/kontakt/">Contact</a></li><li><a href="https://arling.sk/ucet/">Account</a></li><li><a href="https://arling.sk/brand/">Brand</a></li><li><a href="https://arling.sk/podmienky/en/">Terms</a></li><li><a href="https://arling.sk/privacy/">Privacy</a></li><li><a href="https://arling.sk/impressum/">Imprint</a></li></ul></div></div>
+    <p class="site-dev"><span>For developers</span><a href="https://arling.sk/cors-doctor/">CORS</a><a href="https://arling.sk/jwt-doctor/">JWT</a><a href="https://arling.sk/cookie-samesite-doctor/">Cookie SameSite</a><a href="https://arling.sk/redirect-loop-doctor/">Redirect loop</a><a href="https://arling.sk/stripe-webhook-doctor/">Stripe webhook</a><a href="https://arling.sk/firebase-auth-domain-doctor/">Firebase auth</a><a href="https://arling.sk/google-oauth-redirect-doctor/">Google OAuth</a><a href="https://arling.sk/supabase-redirect-doctor/">Supabase redirect</a><a href="https://arling.sk/flutter-supabase-doctor/">Flutter + Supabase</a><a href="https://arling.sk/expo-universal-links-doctor/">Expo links</a><a href="https://arling.sk/expo-supabase-auth-doctor/">Expo + Supabase</a><a href="https://arling.sk/api/">Puzzle API</a></p>
+    <div class="site-foot-bottom"><p>ARLing s. r. o., Ivanská cesta 32E, 821 04 Bratislava, Slovakia. Company ID 56583486, VAT ID SK2122352100. <a href="mailto:andrej@arling.sk">andrej@arling.sk</a></p><p><a href="https://arling.sk/impressum/en/">Impressum</a> · <a href="https://arling.sk/llms.txt">llms.txt</a> · <a href="https://arling.sk/sitemap-index.xml">Sitemap</a></p></div>
+    <p class="site-foot-legal">Tools are provided as is, without warranty. Anonymous visit counts via self-hosted Umami. <a href="https://arling.sk/privacy/en/">Privacy</a> · <a href="https://arling.sk/podmienky/en/">Terms</a> · <a href="https://arling.sk/gdpr/en/">GDPR</a></p>
   </div>
 </footer>
 
