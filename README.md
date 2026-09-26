@@ -83,7 +83,7 @@ The rules implemented here come from:
 
 ## Report a problem
 
-Found a redirect failure this tool doesn't catch, or a check that flags something that's actually fine? Open an issue: https://github.com/AndryRoby/supabase-redirect-doctor/issues, or write to andrej@arling.sk. Redact real domains, project refs, or client secrets first, issues are public.
+Found a redirect failure this tool doesn't catch, or a check that flags something that's actually fine? Open an issue: https://github.com/AndryRoby/supabase-redirect-doctor/issues, or write to support@arling.sk. Redact real domains, project refs, or client secrets first, issues are public.
 
 ## License
 
